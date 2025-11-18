@@ -195,64 +195,41 @@ Incident Summary Report
 
 Installation
 
-1.
-Download all HTML files to a local folder
-2.
-Open index.html in a web browser
-3.
-Start using immediately (no installation required)
+1.Download all HTML files to a local folder
+2.Open index.html in a web browser
+3.Start using immediately (no installation required)
 First Use
 
-1.
-Set up the current date and shift information
-2.
-Configure plant-specific settings
-3.
-Import existing data (if available)
-4.
-Begin logging daily operations
+1.Set up the current date and shift information
+2.Configure plant-specific settings
+3.Import existing data (if available)
+4.Begin logging daily operations
 Data Backup
 
-1.
-Navigate to any tool
-2.
-Click the "Export" button
-3.
-Save the JSON file to secure storage
-4.
-Repeat monthly for data protection
+1.Navigate to any tool
+2.Click the "Export" button
+3.Save the JSON file to secure storage
+4.Repeat monthly for data protection
 🎯 Daily Workflow Example
 
 Morning Shift Start (06:00)
 
-1.
-Open Daily Operations Log
-2.
-Load previous shift's handover
-3.
-Review active alarms and issues
-4.
-Update equipment status
+1.Open Daily Operations Log
+2.Load previous shift's handover
+3.Review active alarms and issues
+4.Update equipment status
 During Shift
 
-1.
-Log plant parameters every 2 hours
-2.
-Record any incidents or unusual events
-3.
-Update work permits and equipment checkouts
-4.
-Monitor DCS system health
+1.Log plant parameters every 2 hours
+2.Record any incidents or unusual events
+3.Update work permits and equipment checkouts
+4.Monitor DCS system health
 Shift End (18:00)
 
-1.
-Complete shift handover form
-2.
-Summarize the day's activities
-3.
-Export daily log data
-4.
-Plan next day's activities
+1.Complete shift handover form
+2.Summarize the day's activities
+3.Export daily log data
+4.Plan next day's activities
 🔧 Customization
 
 Plant-Specific Configuration
