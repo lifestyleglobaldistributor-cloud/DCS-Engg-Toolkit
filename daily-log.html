@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Operations Log - DCS Engineer Toolkit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Fira+Code:wght@400&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        :root {
+            --neutral-900: #0A1929;
+            --neutral-800: #112240;
+            --neutral-700: #1A2D4D;
+            --neutral-500: #8892B0;
+            --neutral-300: #CCD6F6;
+            --neutral-100: #E6F1FF;
+            --primary-500: #00A8FF;
+            --primary-700: #007BBE;
+            --success: #2ECC71;
+            --info: #3498DB;
+            --warning: #F1C40F;
+            --error: #E74C3C;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--neutral-900);
+            color: var(--neutral-300);
+            line-height: 1.5;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 240px;
+            background-color: var(--neutral-800);
+            padding: 24px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 24px;
+            flex: 1;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 0 24px;
+        }
+
+        .logo h1 {
+            color: var(--neutral-100);
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .logo p {
+            color: var(--neutral-500);
+            font-size: 10px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 24px;
+            color: var(--neutral-300);
+            text-decoration: none;
+            transition: background-color 200ms ease-out;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background-color: #1A2D4D;
+        }
+
+        .nav-item.active {
+            background-color: rgba(0, 168, 255, 0.1);
+            border-left: 2px solid var(--primary-500);
+        }
+
+        .nav-item i {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            color: var(--neutral-100);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            background-color: var(--neutral-800);
+            padding: 12px 16px;
+            border-radius: 6px;
+            border: 1px solid var(--neutral-500);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-size: 12px;
+            color: var(--neutral-500);
+            white-space: nowrap;
+        }
+
+        select, input {
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            color: var(--neutral-300);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            min-width: 120px;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgba(0, 168, 255, 0.4);
+        }
+
+        .btn {
+            background-color: var(--primary-500);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 200ms ease-out;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-700);
+        }
+
+        .btn.secondary {
+            background-color: var(--neutral-700);
+            border: 1px solid var(--neutral-500);
+        }
+
+        .btn.secondary:hover {
+            background-color: var(--neutral-600);
+        }
+
+        .btn.success {
+            background-color: var(--success);
+        }
+
+        .btn.warning {
+            background-color: var(--warning);
+            color: black;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--neutral-500);
+            margin-bottom: 24px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            color: var(--neutral-500);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 200ms ease-out;
+        }
+
+        .tab.active {
+            color: var(--primary-500);
+            border-bottom-color: var(--primary-500);
+        }
+
+        .tab:hover {
+            color: var(--neutral-300);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background-color: var(--neutral-800);
+            border-radius: 8px;
+            border: 1px solid var(--neutral-500);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--neutral-500);
+            background-color: var(--neutral-700);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h3 {
+            color: var(--neutral-100);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .card-content {
+            padding: 24px;
+        }
+
+        .shift-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            color: var(--neutral-500);
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            color: var(--neutral-300);
+            padding: 10px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .signature-section {
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            border-radius: 6px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .signature-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .signature-label {
+            font-size: 12px;
+            color: var(--neutral-500);
+            font-weight: 500;
+        }
+
+        .signature-line {
+            border-bottom: 1px solid var(--neutral-500);
+            min-width: 200px;
+            padding: 4px 0;
+            color: var(--neutral-100);
+        }
+
+        .parameter-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+        }
+
+        .parameter-table th {
+            background-color: var(--neutral-700);
+            color: var(--neutral-100);
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--neutral-500);
+        }
+
+        .parameter-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--neutral-700);
+            font-size: 14px;
+        }
+
+        .parameter-table tr:hover {
+            background-color: var(--neutral-750);
+        }
+
+        .code {
+            font-family: 'Fira Code', monospace;
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 12px;
+            color: var(--neutral-100);
+        }
+
+        .input-field {
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            color: var(--neutral-300);
+            padding: 6px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 2px rgba(0, 168, 255, 0.2);
+        }
+
+        .incident-card {
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--neutral-500);
+        }
+
+        .incident-card.minor { border-left-color: var(--warning); }
+        .incident-card.major { border-left-color: var(--error); }
+        .incident-card.critical { border-left-color: var(--error); }
+
+        .incident-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .incident-title {
+            color: var(--neutral-100);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .incident-severity {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .severity-minor { background-color: var(--warning); color: black; }
+        .severity-major { background-color: var(--error); color: white; }
+        .severity-critical { background-color: var(--error); color: white; }
+        .severity-resolved { background-color: var(--success); color: white; }
+
+        .incident-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            font-size: 13px;
+            color: var(--neutral-500);
+            margin-bottom: 12px;
+        }
+
+        .incident-description {
+            color: var(--neutral-300);
+            margin-bottom: 12px;
+        }
+
+        .incident-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .log-entry {
+            background-color: var(--neutral-900);
+            border-left: 3px solid var(--neutral-500);
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .log-entry.minor { border-left-color: var(--warning); }
+        .log-entry.major { border-left-color: var(--error); }
+        .log-entry.info { border-left-color: var(--info); }
+        .log-entry.maintenance { border-left-color: var(--primary-500); }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .log-title {
+            color: var(--neutral-100);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .log-time {
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            color: var(--neutral-500);
+        }
+
+        .log-description {
+            color: var(--neutral-300);
+            font-size: 13px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--neutral-800);
+            border-radius: 8px;
+            border: 1px solid var(--neutral-500);
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--neutral-500);
+            background-color: var(--neutral-700);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            color: var(--neutral-100);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--neutral-500);
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .close-btn:hover {
+            color: var(--neutral-100);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: var(--neutral-500);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 8px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--primary-500);
+        }
+
+        .timeline-content {
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            border-radius: 6px;
+            padding: 16px;
+        }
+
+        .timeline-time {
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            color: var(--neutral-500);
+            margin-bottom: 8px;
+        }
+
+        .timeline-title {
+            color: var(--neutral-100);
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .timeline-description {
+            color: var(--neutral-300);
+            font-size: 13px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 64px;
+            }
+
+            .main-content {
+                margin-left: 64px;
+                padding: 16px;
+            }
+
+            .nav-item span {
+                display: none;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .shift-form {
+                grid-template-columns: 1fr;
+            }
+
+            .incident-details {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                overflow-x: auto;
+            }
+
+            .parameter-table {
+                font-size: 12px;
+            }
+
+            .parameter-table th,
+            .parameter-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <div class="logo">
+                <h1>DCS Tools</h1>
+                <p>Philippine Power Plants</p>
+            </div>
+            
+            <a href="index.html" class="nav-item">
+                <i data-lucide="home"></i>
+                <span>Dashboard</span>
+            </a>
+            
+            <a href="outage-planner.html" class="nav-item">
+                <i data-lucide="calendar"></i>
+                <span>Outage Planner</span>
+            </a>
+            
+            <a href="operations-dashboard.html" class="nav-item">
+                <i data-lucide="activity"></i>
+                <span>Operations</span>
+            </a>
+            
+            <a href="dcs-documentation.html" class="nav-item">
+                <i data-lucide="folder"></i>
+                <span>DCS Documentation</span>
+            </a>
+            
+            <a href="work-management.html" class="nav-item">
+                <i data-lucide="clipboard"></i>
+                <span>Work Management</span>
+            </a>
+            
+            <a href="equipment-management.html" class="nav-item">
+                <i data-lucide="wrench"></i>
+                <span>Equipment</span>
+            </a>
+            
+            <a href="standards-compliance.html" class="nav-item">
+                <i data-lucide="shield"></i>
+                <span>Standards</span>
+            </a>
+            
+            <a href="daily-log.html" class="nav-item active">
+                <i data-lucide="book"></i>
+                <span>Daily Log</span>
+            </a>
+        </nav>
+        
+        <main class="main-content">
+            <div class="header">
+                <div>
+                    <h1>Daily Operations Log</h1>
+                    <p>Shift handover, plant parameters, and incident reporting</p>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn secondary" onclick="exportLogData()">
+                        <i data-lucide="download"></i>
+                        Export
+                    </button>
+                    <button class="btn" onclick="saveCurrentLog()">
+                        <i data-lucide="save"></i>
+                        Save Log
+                    </button>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label>Date:</label>
+                    <input type="date" id="logDate" value="">
+                </div>
+                
+                <div class="control-group">
+                    <label>Shift:</label>
+                    <select id="shiftType">
+                        <option value="day">Day Shift (06:00-18:00)</option>
+                        <option value="night">Night Shift (18:00-06:00)</option>
+                    </select>
+                </div>
+                
+                <button class="btn secondary" onclick="loadLog()">
+                    <i data-lucide="search"></i>
+                    Load Log
+                </button>
+            </div>
+            
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('shift-handover')">Shift Handover</button>
+                <button class="tab" onclick="switchTab('plant-parameters')">Plant Parameters</button>
+                <button class="tab" onclick="switchTab('incidents')">Incidents</button>
+                <button class="tab" onclick="switchTab('activity-log')">Activity Log</button>
+            </div>
+            
+            <div id="shift-handover" class="tab-content active">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Shift Handover Form</h3>
+                        <button class="btn" onclick="generateShiftReport()">
+                            <i data-lucide="file-text"></i>
+                            Generate Report
+                        </button>
+                    </div>
+                    <div class="card-content">
+                        <div class="shift-form">
+                            <div class="form-group">
+                                <label>Shift Engineer (Outgoing)</label>
+                                <input type="text" id="outgoingEngineer" placeholder="Name and signature">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Shift Engineer (Incoming)</label>
+                                <input type="text" id="incomingEngineer" placeholder="Name and signature">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Shift Start Time</label>
+                                <input type="time" id="shiftStartTime" value="06:00">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Shift End Time</label>
+                                <input type="time" id="shiftEndTime" value="18:00">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Unit Status</label>
+                                <select id="unitStatus">
+                                    <option value="running">Running</option>
+                                    <option value="standby">Standby</option>
+                                    <option value="maintenance">Maintenance</option>
+                                    <option value="shutdown">Shutdown</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Load (MW)</label>
+                                <input type="number" id="currentLoad" placeholder="Current load" step="0.1">
+                            </div>
+                            
+                            <div class="form-group full-width">
+                                <label>Equipment Status Summary</label>
+                                <textarea id="equipmentSummary" placeholder="Brief summary of all major equipment status..."></textarea>
+                            </div>
+                            
+                            <div class="form-group full-width">
+                                <label>Alarms and Issues</label>
+                                <textarea id="alarmsIssues" placeholder="Active alarms, known issues, ongoing work..."></textarea>
+                            </div>
+                            
+                            <div class="form-group full-width">
+                                <label>Special Instructions/Remarks</label>
+                                <textarea id="specialInstructions" placeholder="Any special instructions, upcoming tests, or important notes..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="signature-section">
+                            <div class="signature-row">
+                                <span class="signature-label">Outgoing Engineer Signature:</span>
+                                <div class="signature-line" id="outgoingSignature">_________________________</div>
+                            </div>
+                            <div class="signature-row">
+                                <span class="signature-label">Incoming Engineer Signature:</span>
+                                <div class="signature-line" id="incomingSignature">_________________________</div>
+                            </div>
+                            <div class="signature-row">
+                                <span class="signature-label">Date/Time:</span>
+                                <div class="signature-line" id="signatureTime">_________________________</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="plant-parameters" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Plant Parameters Log</h3>
+                        <button class="btn" onclick="addParameterReading()">
+                            <i data-lucide="plus"></i>
+                            Add Reading
+                        </button>
+                    </div>
+                    <div class="card-content">
+                        <table class="parameter-table">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Unit Output (MW)</th>
+                                    <th>Main Steam Pressure (bar)</th>
+                                    <th>Boiler Temp (°C)</th>
+                                    <th>Turbine Speed (RPM)</th>
+                                    <th>Generator Voltage (kV)</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody id="parameterTable">
+                                <!-- Parameter readings will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="incidents" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Incident Reports</h3>
+                        <button class="btn" onclick="showIncidentModal()">
+                            <i data-lucide="plus"></i>
+                            New Incident
+                        </button>
+                    </div>
+                    <div class="card-content">
+                        <div id="incidentList">
+                            <!-- Incidents will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="activity-log" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Shift Activity Log Timeline</h3>
+                        <button class="btn" onclick="addLogEntry()">
+                            <i data-lucide="plus"></i>
+                            Add Entry
+                        </button>
+                    </div>
+                    <div class="card-content">
+                        <div class="timeline" id="activityTimeline">
+                            <!-- Timeline entries will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Incident Modal -->
+    <div class="modal" id="incidentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>New Incident Report</h3>
+                <button class="close-btn" onclick="closeModal('incidentModal')">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Incident Title</label>
+                    <input type="text" id="incidentTitle" placeholder="Brief incident description">
+                </div>
+                
+                <div class="form-group">
+                    <label>Severity Level</label>
+                    <select id="incidentSeverity">
+                        <option value="minor">Minor</option>
+                        <option value="major">Major</option>
+                        <option value="critical">Critical</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Incident Time</label>
+                    <input type="datetime-local" id="incidentTime">
+                </div>
+                
+                <div class="form-group">
+                    <label>Equipment Affected</label>
+                    <input type="text" id="equipmentAffected" placeholder="e.g., Boiler Feed Pump 1">
+                </div>
+                
+                <div class="form-group full-width">
+                    <label>Incident Description</label>
+                    <textarea id="incidentDescription" placeholder="Detailed description of what happened..."></textarea>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label>Actions Taken</label>
+                    <textarea id="actionsTaken" placeholder="Immediate actions taken to address the incident..."></textarea>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label>Root Cause Analysis</label>
+                    <textarea id="rootCause" placeholder="Preliminary root cause analysis..."></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                    <button class="btn secondary" onclick="closeModal('incidentModal')">Cancel</button>
+                    <button class="btn" onclick="createIncident()">Report Incident</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Set default date to today
+        document.getElementById('logDate').value = new Date().toISOString().split('T')[0];
+        
+        // Plant parameter readings
+        let parameterReadings = [
+            {
+                time: '06:00',
+                unitOutput: 350.5,
+                steamPressure: 165.2,
+                boilerTemp: 540.1,
+                turbineSpeed: 3000.0,
+                generatorVoltage: 13.8,
+                notes: 'Shift start - all parameters normal'
+            },
+            {
+                time: '08:00',
+                unitOutput: 355.2,
+                steamPressure: 166.1,
+                boilerTemp: 542.3,
+                turbineSpeed: 3000.2,
+                generatorVoltage: 13.85,
+                notes: 'Load increase as per dispatch'
+            },
+            {
+                time: '10:00',
+                unitOutput: 348.7,
+                steamPressure: 163.8,
+                boilerTemp: 538.9,
+                turbineSpeed: 2999.8,
+                generatorVoltage: 13.75,
+                notes: 'Minor fluctuations observed'
+            },
+            {
+                time: '12:00',
+                unitOutput: 352.1,
+                steamPressure: 165.5,
+                boilerTemp: 541.2,
+                turbineSpeed: 3000.1,
+                generatorVoltage: 13.82,
+                notes: 'Parameters stable'
+            }
+        ];
+        
+        // Incidents data
+        let incidents = [
+            {
+                id: 'INC-2025-001',
+                title: 'Boiler Feed Pump 1 Vibration High',
+                severity: 'major',
+                time: '2025-01-18 14:23',
+                equipment: 'BFP-1',
+                description: 'Vibration level exceeded normal threshold of 2.5 mm/s, reached 4.2 mm/s',
+                actionsTaken: 'Reduced load to 320 MW, called vibration specialist, isolated pump for inspection',
+                rootCause: 'Bearing wear suspected - to be confirmed by vibration analysis',
+                status: 'ongoing'
+            },
+            {
+                id: 'INC-2025-002',
+                title: 'DCS Controller Communication Loss',
+                severity: 'minor',
+                time: '2025-01-18 11:45',
+                equipment: 'CONT-3A',
+                description: 'Intermittent communication loss with Controller 3A (Boiler controls)',
+                actionsTaken: 'Restarted controller, checked network connections, verified redundancy',
+                rootCause: 'Network switch port configuration issue',
+                status: 'resolved'
+            }
+        ];
+        
+        // Activity log entries
+        let activityLog = [
+            {
+                time: '2025-01-18 14:30',
+                title: 'Shift Handover Completed',
+                description: 'Day shift handover to night shift completed. All equipment status briefed.',
+                type: 'info'
+            },
+            {
+                time: '2025-01-18 13:15',
+                title: 'BFP-1 Vibration Alarm',
+                description: 'High vibration alarm received for Boiler Feed Pump 1. Technician dispatched.',
+                type: 'minor'
+            },
+            {
+                time: '2025-01-18 12:00',
+                title: 'Routine Parameter Check',
+                description: 'All plant parameters within normal operating range. No action required.',
+                type: 'info'
+            },
+            {
+                time: '2025-01-18 10:30',
+                title: 'Preventive Maintenance - Generator Cooling',
+                description: 'Scheduled maintenance on generator cooling water pumps completed successfully.',
+                type: 'maintenance'
+            },
+            {
+                time: '2025-01-18 08:45',
+                title: 'Load Dispatch Instruction',
+                description: 'Received instruction to increase load to 355 MW for peak demand.',
+                type: 'info'
+            },
+            {
+                time: '2025-01-18 06:00',
+                title: 'Day Shift Started',
+                description: 'Day shift commenced. All systems operational.',
+                type: 'info'
+            }
+        ];
+        
+        // Shift handover data
+        let shiftHandover = {
+            outgoingEngineer: '',
+            incomingEngineer: '',
+            shiftStartTime: '',
+            shiftEndTime: '',
+            unitStatus: 'running',
+            currentLoad: '',
+            equipmentSummary: '',
+            alarmsIssues: '',
+            specialInstructions: ''
+        };
+        
+        // Render parameter table
+        function renderParameterTable() {
+            const table = document.getElementById('parameterTable');
+            table.innerHTML = '';
+            
+            parameterReadings.forEach((reading, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><span class="code">${reading.time}</span></td>
+                    <td><input type="number" class="input-field" value="${reading.unitOutput}" step="0.1" onchange="updateParameter(${index}, 'unitOutput', this.value)"></td>
+                    <td><input type="number" class="input-field" value="${reading.steamPressure}" step="0.1" onchange="updateParameter(${index}, 'steamPressure', this.value)"></td>
+                    <td><input type="number" class="input-field" value="${reading.boilerTemp}" step="0.1" onchange="updateParameter(${index}, 'boilerTemp', this.value)"></td>
+                    <td><input type="number" class="input-field" value="${reading.turbineSpeed}" step="0.1" onchange="updateParameter(${index}, 'turbineSpeed', this.value)"></td>
+                    <td><input type="number" class="input-field" value="${reading.generatorVoltage}" step="0.01" onchange="updateParameter(${index}, 'generatorVoltage', this.value)"></td>
+                    <td><input type="text" class="input-field" value="${reading.notes}" onchange="updateParameter(${index}, 'notes', this.value)"></td>
+                `;
+                table.appendChild(row);
+            });
+        }
+        
+        // Render incidents
+        function renderIncidents() {
+            const incidentList = document.getElementById('incidentList');
+            incidentList.innerHTML = '';
+            
+            incidents.forEach(incident => {
+                const incidentCard = document.createElement('div');
+                incidentCard.className = `incident-card ${incident.severity}`;
+                incidentCard.innerHTML = `
+                    <div class="incident-header">
+                        <span class="incident-title">${incident.title}</span>
+                        <span class="incident-severity severity-${incident.status}">${incident.status}</span>
+                    </div>
+                    <div class="incident-details">
+                        <div><strong>Time:</strong> ${incident.time}</div>
+                        <div><strong>Equipment:</strong> ${incident.equipment}</div>
+                        <div><strong>Severity:</strong> ${incident.severity}</div>
+                        <div><strong>ID:</strong> <span class="code">${incident.id}</span></div>
+                    </div>
+                    <div class="incident-description">
+                        <strong>Description:</strong> ${incident.description}
+                    </div>
+                    <div class="incident-description">
+                        <strong>Actions Taken:</strong> ${incident.actionsTaken}
+                    </div>
+                    <div class="incident-description">
+                        <strong>Root Cause:</strong> ${incident.rootCause}
+                    </div>
+                    <div class="incident-actions">
+                        <button class="btn secondary" onclick="editIncident('${incident.id}')">
+                            <i data-lucide="edit"></i>
+                            Edit
+                        </button>
+                        ${incident.status === 'ongoing' ? `<button class="btn success" onclick="resolveIncident('${incident.id}')">
+                            <i data-lucide="check"></i>
+                            Resolve
+                        </button>` : ''}
+                    </div>
+                `;
+                incidentList.appendChild(incidentCard);
+            });
+            
+            lucide.createIcons();
+        }
+        
+        // Render activity timeline
+        function renderActivityTimeline() {
+            const timeline = document.getElementById('activityTimeline');
+            timeline.innerHTML = '';
+            
+            activityLog.forEach(entry => {
+                const timelineItem = document.createElement('div');
+                timelineItem.className = 'timeline-item';
+                timelineItem.innerHTML = `
+                    <div class="timeline-content">
+                        <div class="timeline-time">${entry.time}</div>
+                        <div class="timeline-title">${entry.title}</div>
+                        <div class="timeline-description">${entry.description}</div>
+                    </div>
+                `;
+                timeline.appendChild(timelineItem);
+            });
+        }
+        
+        // Switch tabs
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // Update parameter reading
+        function updateParameter(index, field, value) {
+            parameterReadings[index][field] = field.includes('Output') || field.includes('Pressure') || field.includes('Temp') || field.includes('Speed') || field.includes('Voltage') ? 
+                parseFloat(value) : value;
+            saveData();
+        }
+        
+        // Add parameter reading
+        function addParameterReading() {
+            const now = new Date();
+            const timeString = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+            
+            const newReading = {
+                time: timeString,
+                unitOutput: 350.0,
+                steamPressure: 165.0,
+                boilerTemp: 540.0,
+                turbineSpeed: 3000.0,
+                generatorVoltage: 13.8,
+                notes: 'New reading'
+            };
+            
+            parameterReadings.push(newReading);
+            renderParameterTable();
+            saveData();
+        }
+        
+        // Show incident modal
+        function showIncidentModal() {
+            document.getElementById('incidentModal').classList.add('active');
+            document.getElementById('incidentTime').value = new Date().toISOString().slice(0, 16);
+        }
+        
+        // Close modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+        
+        // Create incident
+        function createIncident() {
+            const newIncident = {
+                id: `INC-2025-${String(incidents.length + 1).padStart(3, '0')}`,
+                title: document.getElementById('incidentTitle').value,
+                severity: document.getElementById('incidentSeverity').value,
+                time: document.getElementById('incidentTime').value.replace('T', ' '),
+                equipment: document.getElementById('equipmentAffected').value,
+                description: document.getElementById('incidentDescription').value,
+                actionsTaken: document.getElementById('actionsTaken').value,
+                rootCause: document.getElementById('rootCause').value,
+                status: 'ongoing'
+            };
+            
+            incidents.unshift(newIncident);
+            
+            // Add to activity log
+            addLogEntry(`Incident: ${newIncident.title}`, newIncident.description, newIncident.severity);
+            
+            renderIncidents();
+            closeModal('incidentModal');
+            
+            // Clear form
+            document.getElementById('incidentTitle').value = '';
+            document.getElementById('incidentSeverity').value = 'minor';
+            document.getElementById('equipmentAffected').value = '';
+            document.getElementById('incidentDescription').value = '';
+            document.getElementById('actionsTaken').value = '';
+            document.getElementById('rootCause').value = '';
+            
+            saveData();
+        }
+        
+        // Edit incident
+        function editIncident(incidentId) {
+            alert(`Edit functionality for incident ${incidentId} would be implemented here`);
+        }
+        
+        // Resolve incident
+        function resolveIncident(incidentId) {
+            const incident = incidents.find(i => i.id === incidentId);
+            if (incident) {
+                incident.status = 'resolved';
+                renderIncidents();
+                addLogEntry(`Incident Resolved: ${incident.title}`, 'Incident successfully resolved and closed', 'info');
+                saveData();
+            }
+        }
+        
+        // Add log entry
+        function addLogEntry(title, description, type = 'info') {
+            const newEntry = {
+                time: new Date().toISOString().replace('T', ' ').split('.')[0],
+                title: title,
+                description: description,
+                type: type
+            };
+            
+            activityLog.unshift(newEntry);
+            renderActivityTimeline();
+            saveData();
+        }
+        
+        // Generate shift report
+        function generateShiftReport() {
+            const reportDate = document.getElementById('logDate').value;
+            const shiftType = document.getElementById('shiftType').value;
+            const outgoingEngineer = document.getElementById('outgoingEngineer').value;
+            const incomingEngineer = document.getElementById('incomingEngineer').value;
+            const unitStatus = document.getElementById('unitStatus').value;
+            const currentLoad = document.getElementById('currentLoad').value;
+            
+            const report = `
+SHIFT HANDOVER REPORT
+Date: ${reportDate}
+Shift: ${shiftType.toUpperCase()}
+Outgoing Engineer: ${outgoingEngineer}
+Incoming Engineer: ${incomingEngineer}
+
+UNIT STATUS:
+- Status: ${unitStatus}
+- Current Load: ${currentLoad} MW
+
+EQUIPMENT SUMMARY:
+${document.getElementById('equipmentSummary').value}
+
+ALARMS AND ISSUES:
+${document.getElementById('alarmsIssues').value}
+
+SPECIAL INSTRUCTIONS:
+${document.getElementById('specialInstructions').value}
+
+Generated: ${new Date().toLocaleString()}
+            `;
+            
+            alert('Shift Report Generated:\n\n' + report);
+            
+            // Add to activity log
+            addLogEntry('Shift Report Generated', 'Daily shift handover report completed', 'info');
+        }
+        
+        // Save current log
+        function saveCurrentLog() {
+            const logData = {
+                date: document.getElementById('logDate').value,
+                shiftType: document.getElementById('shiftType').value,
+                shiftHandover: {
+                    outgoingEngineer: document.getElementById('outgoingEngineer').value,
+                    incomingEngineer: document.getElementById('incomingEngineer').value,
+                    shiftStartTime: document.getElementById('shiftStartTime').value,
+                    shiftEndTime: document.getElementById('shiftEndTime').value,
+                    unitStatus: document.getElementById('unitStatus').value,
+                    currentLoad: document.getElementById('currentLoad').value,
+                    equipmentSummary: document.getElementById('equipmentSummary').value,
+                    alarmsIssues: document.getElementById('alarmsIssues').value,
+                    specialInstructions: document.getElementById('specialInstructions').value
+                },
+                parameterReadings: parameterReadings,
+                incidents: incidents,
+                activityLog: activityLog,
+                lastUpdated: new Date().toISOString()
+            };
+            
+            localStorage.setItem(`daily-log-${logData.date}-${logData.shiftType}`, JSON.stringify(logData));
+            alert('Daily log saved successfully!');
+            
+            // Add to activity log
+            addLogEntry('Log Saved', 'Daily operations log saved to local storage', 'info');
+        }
+        
+        // Load log
+        function loadLog() {
+            const logDate = document.getElementById('logDate').value;
+            const shiftType = document.getElementById('shiftType').value;
+            const savedLog = localStorage.getItem(`daily-log-${logDate}-${shiftType}`);
+            
+            if (savedLog) {
+                const logData = JSON.parse(savedLog);
+                
+                // Load shift handover data
+                if (logData.shiftHandover) {
+                    document.getElementById('outgoingEngineer').value = logData.shiftHandover.outgoingEngineer || '';
+                    document.getElementById('incomingEngineer').value = logData.shiftHandover.incomingEngineer || '';
+                    document.getElementById('shiftStartTime').value = logData.shiftHandover.shiftStartTime || '06:00';
+                    document.getElementById('shiftEndTime').value = logData.shiftHandover.shiftEndTime || '18:00';
+                    document.getElementById('unitStatus').value = logData.shiftHandover.unitStatus || 'running';
+                    document.getElementById('currentLoad').value = logData.shiftHandover.currentLoad || '';
+                    document.getElementById('equipmentSummary').value = logData.shiftHandover.equipmentSummary || '';
+                    document.getElementById('alarmsIssues').value = logData.shiftHandover.alarmsIssues || '';
+                    document.getElementById('specialInstructions').value = logData.shiftHandover.specialInstructions || '';
+                }
+                
+                // Load other data
+                if (logData.parameterReadings) parameterReadings = logData.parameterReadings;
+                if (logData.incidents) incidents = logData.incidents;
+                if (logData.activityLog) activityLog = logData.activityLog;
+                
+                // Re-render all components
+                renderParameterTable();
+                renderIncidents();
+                renderActivityTimeline();
+                
+                alert('Log loaded successfully!');
+            } else {
+                alert('No saved log found for the selected date and shift.');
+            }
+        }
+        
+        // Export log data
+        function exportLogData() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                logDate: document.getElementById('logDate').value,
+                shiftType: document.getElementById('shiftType').value,
+                shiftHandover: {
+                    outgoingEngineer: document.getElementById('outgoingEngineer').value,
+                    incomingEngineer: document.getElementById('incomingEngineer').value,
+                    shiftStartTime: document.getElementById('shiftStartTime').value,
+                    shiftEndTime: document.getElementById('shiftEndTime').value,
+                    unitStatus: document.getElementById('unitStatus').value,
+                    currentLoad: document.getElementById('currentLoad').value,
+                    equipmentSummary: document.getElementById('equipmentSummary').value,
+                    alarmsIssues: document.getElementById('alarmsIssues').value,
+                    specialInstructions: document.getElementById('specialInstructions').value
+                },
+                parameterReadings: parameterReadings,
+                incidents: incidents,
+                activityLog: activityLog
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `daily-log-${data.logDate}-${data.shiftType}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        // Auto-save current log periodically
+        function autoSaveCurrentLog() {
+            saveCurrentLog();
+        }
+        
+        // Initialize
+        renderParameterTable();
+        renderIncidents();
+        renderActivityTimeline();
+        
+        // Auto-save every 2 minutes
+        setInterval(autoSaveCurrentLog, 120000);
+        
+        // Close modal when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+        
+        // Update signature time
+        function updateSignatureTime() {
+            document.getElementById('signatureTime').textContent = new Date().toLocaleString();
+        }
+        
+        // Update signature time every minute
+        setInterval(updateSignatureTime, 60000);
+        updateSignatureTime();
+    </script>
+</body>
+</html>

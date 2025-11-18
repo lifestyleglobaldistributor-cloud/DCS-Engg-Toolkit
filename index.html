@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DCS Engineer Toolkit - Philippine Power Plants</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Fira+Code:wght@400&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        :root {
+            --neutral-900: #0A1929;
+            --neutral-800: #112240;
+            --neutral-500: #8892B0;
+            --neutral-300: #CCD6F6;
+            --neutral-100: #E6F1FF;
+            --primary-500: #00A8FF;
+            --primary-700: #007BBE;
+            --success: #2ECC71;
+            --info: #3498DB;
+            --warning: #F1C40F;
+            --error: #E74C3C;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--neutral-900);
+            color: var(--neutral-300);
+            line-height: 1.5;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 240px;
+            background-color: var(--neutral-800);
+            padding: 24px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 48px;
+            flex: 1;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 0 24px;
+        }
+
+        .logo h1 {
+            color: var(--neutral-100);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .logo p {
+            color: var(--neutral-500);
+            font-size: 12px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 24px;
+            color: var(--neutral-300);
+            text-decoration: none;
+            transition: background-color 200ms ease-out;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background-color: #1A2D4D;
+        }
+
+        .nav-item.active {
+            background-color: rgba(0, 168, 255, 0.1);
+            border-left: 2px solid var(--primary-500);
+        }
+
+        .nav-item i {
+            margin-right: 12px;
+            width: 24px;
+            height: 24px;
+        }
+
+        .header {
+            margin-bottom: 48px;
+        }
+
+        .header h1 {
+            color: var(--neutral-100);
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--neutral-500);
+            font-size: 16px;
+        }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .tool-card {
+            background-color: var(--neutral-800);
+            border-radius: 8px;
+            padding: 24px;
+            border: 1px solid var(--neutral-500);
+            transition: all 200ms ease-out;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .tool-card:hover {
+            border-color: var(--primary-500);
+            transform: translateY(-2px);
+        }
+
+        .tool-card h3 {
+            color: var(--neutral-100);
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .tool-card h3 i {
+            margin-right: 12px;
+            color: var(--primary-500);
+        }
+
+        .tool-card p {
+            color: var(--neutral-500);
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .tool-card .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status.ready {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: var(--success);
+        }
+
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 32px;
+        }
+
+        .stat-card {
+            background-color: var(--neutral-800);
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid var(--neutral-500);
+        }
+
+        .stat-card h4 {
+            color: var(--neutral-500);
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .stat-card .value {
+            color: var(--neutral-100);
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .pulse {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 8px var(--error); }
+            50% { box-shadow: 0 0 16px var(--error); }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 64px;
+            }
+
+            .main-content {
+                margin-left: 64px;
+                padding: 24px;
+            }
+
+            .nav-item span {
+                display: none;
+            }
+
+            .tool-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .tool-card:hover {
+                transform: none;
+            }
+            
+            .pulse {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <div class="logo">
+                <h1>DCS Tools</h1>
+                <p>Philippine Power Plants</p>
+            </div>
+            
+            <a href="index.html" class="nav-item active">
+                <i data-lucide="home"></i>
+                <span>Dashboard</span>
+            </a>
+            
+            <a href="outage-planner.html" class="nav-item">
+                <i data-lucide="calendar"></i>
+                <span>Outage Planner</span>
+            </a>
+            
+            <a href="operations-dashboard.html" class="nav-item">
+                <i data-lucide="activity"></i>
+                <span>Operations</span>
+            </a>
+            
+            <a href="dcs-documentation.html" class="nav-item">
+                <i data-lucide="folder"></i>
+                <span>DCS Documentation</span>
+            </a>
+            
+            <a href="work-management.html" class="nav-item">
+                <i data-lucide="clipboard"></i>
+                <span>Work Management</span>
+            </a>
+            
+            <a href="equipment-management.html" class="nav-item">
+                <i data-lucide="wrench"></i>
+                <span>Equipment</span>
+            </a>
+            
+            <a href="standards-compliance.html" class="nav-item">
+                <i data-lucide="shield"></i>
+                <span>Standards</span>
+            </a>
+            
+            <a href="daily-log.html" class="nav-item">
+                <i data-lucide="book"></i>
+                <span>Daily Log</span>
+            </a>
+        </nav>
+        
+        <main class="main-content">
+            <div class="header">
+                <h1>DCS Engineer Control Center</h1>
+                <p>Professional toolkit for Philippine power plant operations and maintenance</p>
+            </div>
+            
+            <div class="tool-grid">
+                <a href="outage-planner.html" class="tool-card">
+                    <h3>
+                        <i data-lucide="calendar"></i>
+                        Outage Planner
+                    </h3>
+                    <p>Gantt-style outage planning with DCS-specific jobs, LOTO tracking, and risk assessment</p>
+                    <span class="status ready">Ready</span>
+                </a>
+                
+                <a href="operations-dashboard.html" class="tool-card">
+                    <h3>
+                        <i data-lucide="activity"></i>
+                        Operations Dashboard
+                    </h3>
+                    <p>Real-time plant monitoring, alarm management, and equipment status tracking</p>
+                    <span class="status ready">Ready</span>
+                </a>
+                
+                <a href="dcs-documentation.html" class="tool-card">
+                    <h3>
+                        <i data-lucide="folder"></i>
+                        DCS Documentation
+                    </h3>
+                    <p>Logic backup tracking, I/O verification, controller diagnostics for all major DCS systems</p>
+                    <span class="status ready">Ready</span>
+                </a>
+                
+                <a href="work-management.html" class="tool-card">
+                    <h3>
+                        <i data-lucide="clipboard"></i>
+                        Work Management
+                    </h3>
+                    <p>Permit to work system, equipment checkout, and maintenance scheduling</p>
+                    <span class="status ready">Ready</span>
+                </a>
+                
+                <a href="equipment-management.html" class="tool-card">
+                    <h3>
+                        <i data-lucide="wrench"></i>
+                        Equipment Management
+                    </h3>
+                    <p>Tools & equipment tracker, calibration records, and maintenance history</p>
+                    <span class="status ready">Ready</span>
+                </a>
+                
+                <a href="standards-compliance.html" class="tool-card">
+                    <h3>
+                        <i data-lucide="shield"></i>
+                        Standards Compliance
+                    </h3>
+                    <p>Philippine Electrical Code integration and DOE reporting templates</p>
+                    <span class="status ready">Ready</span>
+                </a>
+                
+                <a href="daily-log.html" class="tool-card">
+                    <h3>
+                        <i data-lucide="book"></i>
+                        Daily Operations Log
+                    </h3>
+                    <p>Shift handover, plant parameter logging, and incident reporting</p>
+                    <span class="status ready">Ready</span>
+                </a>
+            </div>
+            
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <h4>Active Outages</h4>
+                    <div class="value">2</div>
+                </div>
+                
+                <div class="stat-card">
+                    <h4>Critical Alarms</h4>
+                    <div class="value pulse">3</div>
+                </div>
+                
+                <div class="stat-card">
+                    <h4>Active Permits</h4>
+                    <div class="value">7</div>
+                </div>
+                
+                <div class="stat-card">
+                    <h4>Equipment Status</h4>
+                    <div class="value" style="color: var(--success);">98%</div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Load and display saved statistics
+        function loadStats() {
+            const stats = JSON.parse(localStorage.getItem('dcs-stats') || '{}');
+            // Update stats with saved data or defaults
+        }
+        
+        // Save statistics periodically
+        function saveStats() {
+            const stats = {
+                activeOutages: 2,
+                criticalAlarms: 3,
+                activePermits: 7,
+                equipmentStatus: 98,
+                lastUpdated: new Date().toISOString()
+            };
+            localStorage.setItem('dcs-stats', JSON.stringify(stats));
+        }
+        
+        // Auto-save stats every 30 seconds
+        setInterval(saveStats, 30000);
+        loadStats();
+        
+        // Offline indicator
+        function checkOnlineStatus() {
+            if (!navigator.onLine) {
+                console.log('Working offline');
+            }
+        }
+        
+        window.addEventListener('online', checkOnlineStatus);
+        window.addEventListener('offline', checkOnlineStatus);
+        checkOnlineStatus();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equipment Management - DCS Engineer Toolkit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Fira+Code:wght@400&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        :root {
+            --neutral-900: #0A1929;
+            --neutral-800: #112240;
+            --neutral-700: #1A2D4D;
+            --neutral-500: #8892B0;
+            --neutral-300: #CCD6F6;
+            --neutral-100: #E6F1FF;
+            --primary-500: #00A8FF;
+            --primary-700: #007BBE;
+            --success: #2ECC71;
+            --info: #3498DB;
+            --warning: #F1C40F;
+            --error: #E74C3C;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--neutral-900);
+            color: var(--neutral-300);
+            line-height: 1.5;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 240px;
+            background-color: var(--neutral-800);
+            padding: 24px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 24px;
+            flex: 1;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 0 24px;
+        }
+
+        .logo h1 {
+            color: var(--neutral-100);
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .logo p {
+            color: var(--neutral-500);
+            font-size: 10px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 24px;
+            color: var(--neutral-300);
+            text-decoration: none;
+            transition: background-color 200ms ease-out;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background-color: #1A2D4D;
+        }
+
+        .nav-item.active {
+            background-color: rgba(0, 168, 255, 0.1);
+            border-left: 2px solid var(--primary-500);
+        }
+
+        .nav-item i {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            color: var(--neutral-100);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            background-color: var(--neutral-800);
+            padding: 12px 16px;
+            border-radius: 6px;
+            border: 1px solid var(--neutral-500);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-size: 12px;
+            color: var(--neutral-500);
+            white-space: nowrap;
+        }
+
+        select, input {
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            color: var(--neutral-300);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            min-width: 120px;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgba(0, 168, 255, 0.4);
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding-left: 40px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238892B0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/path%3E%3Cpath d='m21 21-4.35-4.35'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 12px center;
+        }
+
+        .btn {
+            background-color: var(--primary-500);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 200ms ease-out;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-700);
+        }
+
+        .btn.secondary {
+            background-color: var(--neutral-700);
+            border: 1px solid var(--neutral-500);
+        }
+
+        .btn.secondary:hover {
+            background-color: var(--neutral-600);
+        }
+
+        .btn.success {
+            background-color: var(--success);
+        }
+
+        .btn.warning {
+            background-color: var(--warning);
+            color: black;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--neutral-500);
+            margin-bottom: 24px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            color: var(--neutral-500);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 200ms ease-out;
+        }
+
+        .tab.active {
+            color: var(--primary-500);
+            border-bottom-color: var(--primary-500);
+        }
+
+        .tab:hover {
+            color: var(--neutral-300);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background-color: var(--neutral-800);
+            border-radius: 8px;
+            border: 1px solid var(--neutral-500);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--neutral-500);
+            background-color: var(--neutral-700);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h3 {
+            color: var(--neutral-100);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .card-content {
+            padding: 24px;
+        }
+
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .equipment-card {
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            border-radius: 6px;
+            padding: 16px;
+            transition: border-color 200ms ease-out;
+        }
+
+        .equipment-card:hover {
+            border-color: var(--primary-500);
+        }
+
+        .equipment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .equipment-id {
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            color: var(--primary-500);
+            font-weight: 600;
+        }
+
+        .equipment-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .status-available { background-color: var(--success); color: white; }
+        .status-in-use { background-color: var(--warning); color: black; }
+        .status-maintenance { background-color: var(--info); color: white; }
+        .status-calibration { background-color: var(--warning); color: black; }
+        .status-out-of-service { background-color: var(--error); color: white; }
+
+        .equipment-name {
+            color: var(--neutral-100);
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .equipment-category {
+            color: var(--neutral-500);
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .equipment-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--neutral-500);
+            margin-bottom: 12px;
+        }
+
+        .equipment-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background-color: var(--neutral-700);
+            color: var(--neutral-100);
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--neutral-500);
+        }
+
+        .table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--neutral-700);
+            font-size: 14px;
+        }
+
+        .table tr:hover {
+            background-color: var(--neutral-750);
+        }
+
+        .code {
+            font-family: 'Fira Code', monospace;
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 12px;
+            color: var(--neutral-100);
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .status-pass { background-color: var(--success); color: white; }
+        .status-fail { background-color: var(--error); color: white; }
+        .status-pending { background-color: var(--warning); color: black; }
+        .status-due { background-color: var(--warning); color: black; }
+        .status-overdue { background-color: var(--error); color: white; }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--neutral-700);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-500);
+            transition: width 200ms ease-out;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background-color: var(--neutral-800);
+            border-radius: 8px;
+            border: 1px solid var(--neutral-500);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--neutral-100);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--neutral-500);
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .filter-btn {
+            background-color: var(--neutral-700);
+            color: var(--neutral-300);
+            border: 1px solid var(--neutral-500);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 200ms ease-out;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background-color: var(--primary-500);
+            color: white;
+            border-color: var(--primary-500);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--neutral-800);
+            border-radius: 8px;
+            border: 1px solid var(--neutral-500);
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--neutral-500);
+            background-color: var(--neutral-700);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            color: var(--neutral-100);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--neutral-500);
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .close-btn:hover {
+            color: var(--neutral-100);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            color: var(--neutral-500);
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            color: var(--neutral-300);
+            padding: 10px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+            font-family: 'Inter', sans-serif;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 64px;
+            }
+
+            .main-content {
+                margin-left: 64px;
+                padding: 16px;
+            }
+
+            .nav-item span {
+                display: none;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .equipment-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                overflow-x: auto;
+            }
+
+            .table {
+                font-size: 12px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <div class="logo">
+                <h1>DCS Tools</h1>
+                <p>Philippine Power Plants</p>
+            </div>
+            
+            <a href="index.html" class="nav-item">
+                <i data-lucide="home"></i>
+                <span>Dashboard</span>
+            </a>
+            
+            <a href="outage-planner.html" class="nav-item">
+                <i data-lucide="calendar"></i>
+                <span>Outage Planner</span>
+            </a>
+            
+            <a href="operations-dashboard.html" class="nav-item">
+                <i data-lucide="activity"></i>
+                <span>Operations</span>
+            </a>
+            
+            <a href="dcs-documentation.html" class="nav-item">
+                <i data-lucide="folder"></i>
+                <span>DCS Documentation</span>
+            </a>
+            
+            <a href="work-management.html" class="nav-item">
+                <i data-lucide="clipboard"></i>
+                <span>Work Management</span>
+            </a>
+            
+            <a href="equipment-management.html" class="nav-item active">
+                <i data-lucide="wrench"></i>
+                <span>Equipment</span>
+            </a>
+            
+            <a href="standards-compliance.html" class="nav-item">
+                <i data-lucide="shield"></i>
+                <span>Standards</span>
+            </a>
+            
+            <a href="daily-log.html" class="nav-item">
+                <i data-lucide="book"></i>
+                <span>Daily Log</span>
+            </a>
+        </nav>
+        
+        <main class="main-content">
+            <div class="header">
+                <div>
+                    <h1>Equipment Management System</h1>
+                    <p>Tools tracking, calibration records, and maintenance history</p>
+                </div>
+                <button class="btn" onclick="showAddEquipmentModal()">
+                    <i data-lucide="plus"></i>
+                    Add Equipment
+                </button>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalEquipment">45</div>
+                    <div class="stat-label">Total Equipment</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="availableEquipment">32</div>
+                    <div class="stat-label">Available</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="dueCalibration">8</div>
+                    <div class="stat-label">Calibration Due</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="maintenanceRequired">5</div>
+                    <div class="stat-label">Maintenance Required</div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <div class="search-box">
+                    <input type="text" id="equipmentSearch" placeholder="Search equipment..." onkeyup="filterEquipment()">
+                </div>
+                
+                <div class="control-group">
+                    <label>Category:</label>
+                    <select id="categoryFilter" onchange="filterEquipment()">
+                        <option value="all">All Categories</option>
+                        <option value="electrical">Electrical Test Equipment</option>
+                        <option value="instrumentation">Instrumentation Tools</option>
+                        <option value="network">Network Equipment</option>
+                        <option value="calibration">Calibration Equipment</option>
+                        <option value="hand-tools">Hand Tools</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label>Status:</label>
+                    <select id="statusFilter" onchange="filterEquipment()">
+                        <option value="all">All Status</option>
+                        <option value="available">Available</option>
+                        <option value="in-use">In Use</option>
+                        <option value="maintenance">Maintenance</option>
+                        <option value="calibration">Calibration</option>
+                    </select>
+                </div>
+                
+                <button class="btn secondary" onclick="exportEquipmentData()">
+                    <i data-lucide="download"></i>
+                    Export
+                </button>
+            </div>
+            
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('equipment-list')">Equipment List</button>
+                <button class="tab" onclick="switchTab('calibration')">Calibration Records</button>
+                <button class="tab" onclick="switchTab('maintenance')">Maintenance History</button>
+                <button class="tab" onclick="switchTab('inventory')">Inventory Management</button>
+            </div>
+            
+            <div id="equipment-list" class="tab-content active">
+                <div class="equipment-grid" id="equipmentGrid">
+                    <!-- Equipment will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div id="calibration" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Calibration Records</h3>
+                        <button class="btn" onclick="showCalibrationModal()">
+                            <i data-lucide="plus"></i>
+                            New Calibration
+                        </button>
+                    </div>
+                    <div class="card-content">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Equipment ID</th>
+                                    <th>Equipment Name</th>
+                                    <th>Calibration Date</th>
+                                    <th>Due Date</th>
+                                    <th>Calibrated By</th>
+                                    <th>Result</th>
+                                    <th>Certificate</th>
+                                </tr>
+                            </thead>
+                            <tbody id="calibrationTable">
+                                <!-- Calibration records will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="maintenance" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Maintenance History</h3>
+                        <button class="btn" onclick="showMaintenanceModal()">
+                            <i data-lucide="plus"></i>
+                            Record Maintenance
+                        </button>
+                    </div>
+                    <div class="card-content">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Equipment ID</th>
+                                    <th>Maintenance Date</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                    <th>Technician</th>
+                                    <th>Cost</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="maintenanceTable">
+                                <!-- Maintenance records will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="inventory" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Inventory Management</h3>
+                        <button class="btn" onclick="showInventoryModal()">
+                            <i data-lucide="plus"></i>
+                            Add to Inventory
+                        </button>
+                    </div>
+                    <div class="card-content">
+                        <div class="filter-controls">
+                            <button class="filter-btn active" onclick="filterInventory('all')">All Items</button>
+                            <button class="filter-btn" onclick="filterInventory('low-stock')">Low Stock</button>
+                            <button class="filter-btn" onclick="filterInventory('out-of-stock')">Out of Stock</button>
+                        </div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Item Code</th>
+                                    <th>Description</th>
+                                    <th>Category</th>
+                                    <th>Current Stock</th>
+                                    <th>Minimum Required</th>
+                                    <th>Unit Price</th>
+                                    <th>Supplier</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventoryTable">
+                                <!-- Inventory data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Add Equipment Modal -->
+    <div class="modal" id="equipmentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Equipment</h3>
+                <button class="close-btn" onclick="closeModal('equipmentModal')">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Equipment Name</label>
+                    <input type="text" id="equipmentName" placeholder="e.g., Digital Multimeter">
+                </div>
+                
+                <div class="form-group">
+                    <label>Equipment ID</label>
+                    <input type="text" id="equipmentId" placeholder="e.g., MUL-001" value="MUL-">
+                </div>
+                
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="equipmentCategory">
+                        <option value="electrical">Electrical Test Equipment</option>
+                        <option value="instrumentation">Instrumentation Tools</option>
+                        <option value="network">Network Equipment</option>
+                        <option value="calibration">Calibration Equipment</option>
+                        <option value="hand-tools">Hand Tools</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Model</label>
+                    <input type="text" id="equipmentModel" placeholder="e.g., Fluke 87V">
+                </div>
+                
+                <div class="form-group">
+                    <label>Serial Number</label>
+                    <input type="text" id="serialNumber" placeholder="Serial number">
+                </div>
+                
+                <div class="form-group">
+                    <label>Manufacturer</label>
+                    <input type="text" id="manufacturer" placeholder="e.g., Fluke Corporation">
+                </div>
+                
+                <div class="form-group">
+                    <label>Purchase Date</label>
+                    <input type="date" id="purchaseDate">
+                </div>
+                
+                <div class="form-group">
+                    <label>Calibration Frequency (months)</label>
+                    <input type="number" id="calibrationFreq" value="12" min="1" max="60">
+                </div>
+                
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" id="equipmentLocation" placeholder="e.g., Control Room Cabinet A">
+                </div>
+                
+                <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                    <button class="btn secondary" onclick="closeModal('equipmentModal')">Cancel</button>
+                    <button class="btn" onclick="addEquipment()">Add Equipment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Calibration Modal -->
+    <div class="modal" id="calibrationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>New Calibration Record</h3>
+                <button class="close-btn" onclick="closeModal('calibrationModal')">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Equipment</label>
+                    <select id="calibrationEquipment">
+                        <option value="MUL-001">Digital Multimeter - MUL-001</option>
+                        <option value="OSC-001">Oscilloscope - OSC-001</option>
+                        <option value="CAL-001">Loop Calibrator - CAL-001</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Calibration Date</label>
+                    <input type="date" id="calibrationDate">
+                </div>
+                
+                <div class="form-group">
+                    <label>Calibrated By</label>
+                    <input type="text" id="calibratedBy" placeholder="Technician name">
+                </div>
+                
+                <div class="form-group">
+                    <label>Result</label>
+                    <select id="calibrationResult">
+                        <option value="pass">Pass</option>
+                        <option value="fail">Fail</option>
+                        <option value="pending">Pending</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Certificate Number</label>
+                    <input type="text" id="certificateNumber" placeholder="Certificate ID">
+                </div>
+                
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="calibrationNotes" placeholder="Calibration notes..."></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                    <button class="btn secondary" onclick="closeModal('calibrationModal')">Cancel</button>
+                    <button class="btn" onclick="addCalibration()">Record Calibration</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Equipment data
+        let equipment = [
+            {
+                id: 'MUL-001',
+                name: 'Digital Multimeter',
+                category: 'electrical',
+                model: 'Fluke 87V',
+                serial: 'FLK2024001',
+                manufacturer: 'Fluke Corporation',
+                status: 'available',
+                location: 'Control Room Cabinet A',
+                purchaseDate: '2023-03-15',
+                calibrationDue: '2025-03-15',
+                lastCalibration: '2024-03-15',
+                calibrationFreq: 12,
+                value: '₱45,000'
+            },
+            {
+                id: 'OSC-001',
+                name: 'Digital Oscilloscope',
+                category: 'electrical',
+                model: 'Tektronix TDS1002C-EDU',
+                serial: 'TEK2024002',
+                manufacturer: 'Tektronix',
+                status: 'in-use',
+                location: 'Control Room Cabinet B',
+                purchaseDate: '2023-06-20',
+                calibrationDue: '2025-01-20',
+                lastCalibration: '2024-01-20',
+                calibrationFreq: 12,
+                value: '₱85,000'
+            },
+            {
+                id: 'CAL-001',
+                name: 'Loop Calibrator',
+                category: 'instrumentation',
+                model: 'Fluke 754',
+                serial: 'FLK2024003',
+                manufacturer: 'Fluke Corporation',
+                status: 'maintenance',
+                location: 'Instrument Shop',
+                purchaseDate: '2023-08-10',
+                calibrationDue: '2024-12-10',
+                lastCalibration: '2023-12-10',
+                calibrationFreq: 12,
+                value: '₱125,000'
+            },
+            {
+                id: 'NET-001',
+                name: 'Network Analyzer',
+                category: 'network',
+                model: 'Fluke AirCheck G2',
+                serial: 'FLK2024004',
+                manufacturer: 'Fluke Corporation',
+                status: 'available',
+                location: 'Network Room',
+                purchaseDate: '2023-09-05',
+                calibrationDue: '2025-09-05',
+                lastCalibration: '2024-09-05',
+                calibrationFreq: 12,
+                value: '₱95,000'
+            },
+            {
+                id: 'HMI-001',
+                name: 'Portable HMI Terminal',
+                category: 'network',
+                model: 'Advantech TPC-2151W',
+                serial: 'ADV2024005',
+                manufacturer: 'Advantech',
+                status: 'available',
+                location: 'Control Room',
+                purchaseDate: '2023-11-12',
+                calibrationDue: '2026-11-12',
+                lastCalibration: '2023-11-12',
+                calibrationFreq: 36,
+                value: '₱180,000'
+            },
+            {
+                id: 'PRS-001',
+                name: 'Pressure Calibrator',
+                category: 'calibration',
+                model: 'Fluke 719Pro',
+                serial: 'FLK2024006',
+                manufacturer: 'Fluke Corporation',
+                status: 'calibration',
+                location: 'Calibration Lab',
+                purchaseDate: '2024-01-15',
+                calibrationDue: '2025-01-15',
+                lastCalibration: '2024-01-15',
+                calibrationFreq: 12,
+                value: '₱75,000'
+            }
+        ];
+        
+        // Calibration records
+        let calibrationRecords = [
+            {
+                equipmentId: 'MUL-001',
+                equipmentName: 'Digital Multimeter',
+                date: '2024-03-15',
+                dueDate: '2025-03-15',
+                calibratedBy: 'Tech. dela Cruz',
+                result: 'pass',
+                certificate: 'CAL-2024-001'
+            },
+            {
+                equipmentId: 'OSC-001',
+                equipmentName: 'Digital Oscilloscope',
+                date: '2024-01-20',
+                dueDate: '2025-01-20',
+                calibratedBy: 'Eng. Rodriguez',
+                result: 'pass',
+                certificate: 'CAL-2024-002'
+            },
+            {
+                equipmentId: 'NET-001',
+                equipmentName: 'Network Analyzer',
+                date: '2024-09-05',
+                dueDate: '2025-09-05',
+                calibratedBy: 'Tech. Santos',
+                result: 'pass',
+                certificate: 'CAL-2024-003'
+            }
+        ];
+        
+        // Maintenance records
+        let maintenanceRecords = [
+            {
+                equipmentId: 'CAL-001',
+                date: '2025-01-15',
+                type: 'Repair',
+                description: 'Replaced battery and cleaned connectors',
+                technician: 'Tech. Mendoza',
+                cost: '₱2,500',
+                status: 'completed'
+            },
+            {
+                equipmentId: 'MUL-001',
+                date: '2024-11-20',
+                type: 'Preventive',
+                description: 'Cleaned test leads and checked accuracy',
+                technician: 'Tech. dela Cruz',
+                cost: '₱800',
+                status: 'completed'
+            }
+        ];
+        
+        // Inventory data
+        let inventoryItems = [
+            {
+                code: 'TEST-LEAD-001',
+                description: 'Test Lead Set for Multimeters',
+                category: 'Electrical',
+                currentStock: 15,
+                minRequired: 10,
+                unitPrice: '₱1,200',
+                supplier: 'Fluke Philippines',
+                status: 'ok'
+            },
+            {
+                code: 'BATTERY-9V',
+                description: '9V Battery Pack',
+                category: 'Power',
+                currentStock: 3,
+                minRequired: 20,
+                unitPrice: '₱150',
+                supplier: 'ABC Electronics',
+                status: 'low-stock'
+            },
+            {
+                code: 'NET-CABLE-CAT6',
+                description: 'CAT6 Network Cable 1m',
+                category: 'Network',
+                currentStock: 0,
+                minRequired: 50,
+                unitPrice: '₱250',
+                supplier: 'Network Solutions Inc.',
+                status: 'out-of-stock'
+            }
+        ];
+        
+        // Render equipment grid
+        function renderEquipment() {
+            const equipmentGrid = document.getElementById('equipmentGrid');
+            equipmentGrid.innerHTML = '';
+            
+            const searchTerm = document.getElementById('equipmentSearch').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            
+            let filteredEquipment = equipment;
+            
+            if (searchTerm) {
+                filteredEquipment = filteredEquipment.filter(eq => 
+                    eq.name.toLowerCase().includes(searchTerm) ||
+                    eq.id.toLowerCase().includes(searchTerm) ||
+                    eq.model.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            if (categoryFilter !== 'all') {
+                filteredEquipment = filteredEquipment.filter(eq => eq.category === categoryFilter);
+            }
+            
+            if (statusFilter !== 'all') {
+                filteredEquipment = filteredEquipment.filter(eq => eq.status === statusFilter);
+            }
+            
+            filteredEquipment.forEach(eq => {
+                const daysUntilDue = Math.ceil((new Date(eq.calibrationDue) - new Date()) / (1000 * 60 * 60 * 24));
+                const isOverdue = daysUntilDue < 0;
+                const isDueSoon = daysUntilDue > 0 && daysUntilDue <= 30;
+                
+                const equipmentCard = document.createElement('div');
+                equipmentCard.className = 'equipment-card';
+                equipmentCard.innerHTML = `
+                    <div class="equipment-header">
+                        <span class="equipment-id">${eq.id}</span>
+                        <span class="equipment-status status-${eq.status}">${eq.status}</span>
+                    </div>
+                    <div class="equipment-name">${eq.name}</div>
+                    <div class="equipment-category">${eq.model} | ${eq.manufacturer}</div>
+                    <div class="equipment-details">
+                        <div><strong>Serial:</strong> ${eq.serial}</div>
+                        <div><strong>Value:</strong> ${eq.value}</div>
+                        <div><strong>Location:</strong> ${eq.location}</div>
+                        <div><strong>Purchased:</strong> ${eq.purchaseDate}</div>
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <div style="font-size: 12px; color: var(--neutral-500); margin-bottom: 4px;">
+                            Calibration Due: ${eq.calibrationDue}
+                            ${isOverdue ? '<span style="color: var(--error);"> (OVERDUE)</span>' : ''}
+                            ${isDueSoon ? '<span style="color: var(--warning);"> (DUE SOON)</span>' : ''}
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${Math.max(0, 100 - Math.abs(daysUntilDue) / 365 * 100)}%"></div>
+                        </div>
+                    </div>
+                    <div class="equipment-actions">
+                        <button class="btn secondary" onclick="viewEquipment('${eq.id}')">
+                            <i data-lucide="eye"></i>
+                            View
+                        </button>
+                        <button class="btn" onclick="editEquipment('${eq.id}')">
+                            <i data-lucide="edit"></i>
+                            Edit
+                        </button>
+                    </div>
+                `;
+                equipmentGrid.appendChild(equipmentCard);
+            });
+            
+            lucide.createIcons();
+            updateStats();
+        }
+        
+        // Render calibration table
+        function renderCalibrationTable() {
+            const table = document.getElementById('calibrationTable');
+            table.innerHTML = '';
+            
+            calibrationRecords.forEach(record => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><span class="code">${record.equipmentId}</span></td>
+                    <td>${record.equipmentName}</td>
+                    <td>${record.date}</td>
+                    <td>${record.dueDate}</td>
+                    <td>${record.calibratedBy}</td>
+                    <td><span class="status-badge status-${record.result}">${record.result}</span></td>
+                    <td><span class="code">${record.certificate}</span></td>
+                `;
+                table.appendChild(row);
+            });
+        }
+        
+        // Render maintenance table
+        function renderMaintenanceTable() {
+            const table = document.getElementById('maintenanceTable');
+            table.innerHTML = '';
+            
+            maintenanceRecords.forEach(record => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><span class="code">${record.equipmentId}</span></td>
+                    <td>${record.date}</td>
+                    <td>${record.type}</td>
+                    <td>${record.description}</td>
+                    <td>${record.technician}</td>
+                    <td>${record.cost}</td>
+                    <td><span class="status-badge status-${record.status}">${record.status}</span></td>
+                `;
+                table.appendChild(row);
+            });
+        }
+        
+        // Render inventory table
+        function renderInventoryTable(filter = 'all') {
+            const table = document.getElementById('inventoryTable');
+            table.innerHTML = '';
+            
+            let filteredItems = inventoryItems;
+            
+            if (filter !== 'all') {
+                filteredItems = filteredItems.filter(item => item.status === filter);
+            }
+            
+            filteredItems.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><span class="code">${item.code}</span></td>
+                    <td>${item.description}</td>
+                    <td>${item.category}</td>
+                    <td>${item.currentStock}</td>
+                    <td>${item.minRequired}</td>
+                    <td>${item.unitPrice}</td>
+                    <td>${item.supplier}</td>
+                    <td><span class="status-badge status-${item.status}">${item.status.replace('-', ' ')}</span></td>
+                `;
+                table.appendChild(row);
+            });
+        }
+        
+        // Update statistics
+        function updateStats() {
+            document.getElementById('totalEquipment').textContent = equipment.length;
+            document.getElementById('availableEquipment').textContent = equipment.filter(eq => eq.status === 'available').length;
+            
+            const now = new Date();
+            const dueCalibration = equipment.filter(eq => {
+                const dueDate = new Date(eq.calibrationDue);
+                return dueDate <= new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+            }).length;
+            document.getElementById('dueCalibration').textContent = dueCalibration;
+            
+            document.getElementById('maintenanceRequired').textContent = equipment.filter(eq => eq.status === 'maintenance').length;
+        }
+        
+        // Switch tabs
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // Filter equipment
+        function filterEquipment() {
+            renderEquipment();
+        }
+        
+        // Filter inventory
+        function filterInventory(filter) {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            renderInventoryTable(filter);
+        }
+        
+        // Show modals
+        function showAddEquipmentModal() {
+            document.getElementById('equipmentModal').classList.add('active');
+        }
+        
+        function showCalibrationModal() {
+            document.getElementById('calibrationModal').classList.add('active');
+        }
+        
+        function showMaintenanceModal() {
+            alert('Maintenance modal would be implemented here');
+        }
+        
+        function showInventoryModal() {
+            alert('Inventory modal would be implemented here');
+        }
+        
+        // Close modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+        
+        // Add equipment
+        function addEquipment() {
+            const newEquipment = {
+                id: document.getElementById('equipmentId').value || `NEW-${Date.now()}`,
+                name: document.getElementById('equipmentName').value,
+                category: document.getElementById('equipmentCategory').value,
+                model: document.getElementById('equipmentModel').value,
+                serial: document.getElementById('serialNumber').value,
+                manufacturer: document.getElementById('manufacturer').value,
+                status: 'available',
+                location: document.getElementById('equipmentLocation').value,
+                purchaseDate: document.getElementById('purchaseDate').value,
+                calibrationDue: document.getElementById('purchaseDate').value,
+                lastCalibration: document.getElementById('purchaseDate').value,
+                calibrationFreq: parseInt(document.getElementById('calibrationFreq').value),
+                value: '₱0'
+            };
+            
+            equipment.unshift(newEquipment);
+            renderEquipment();
+            closeModal('equipmentModal');
+            saveData();
+        }
+        
+        // Add calibration record
+        function addCalibration() {
+            const selectedEquipment = document.getElementById('calibrationEquipment').value;
+            const equipmentItem = equipment.find(eq => eq.id === selectedEquipment);
+            
+            if (equipmentItem) {
+                const calibrationDate = document.getElementById('calibrationDate').value;
+                const dueDate = new Date(calibrationDate);
+                dueDate.setMonth(dueDate.getMonth() + equipmentItem.calibrationFreq);
+                
+                const newRecord = {
+                    equipmentId: selectedEquipment,
+                    equipmentName: equipmentItem.name,
+                    date: calibrationDate,
+                    dueDate: dueDate.toISOString().split('T')[0],
+                    calibratedBy: document.getElementById('calibratedBy').value,
+                    result: document.getElementById('calibrationResult').value,
+                    certificate: document.getElementById('certificateNumber').value
+                };
+                
+                calibrationRecords.unshift(newRecord);
+                equipmentItem.lastCalibration = calibrationDate;
+                equipmentItem.calibrationDue = dueDate.toISOString().split('T')[0];
+                
+                renderCalibrationTable();
+                renderEquipment();
+                closeModal('calibrationModal');
+                saveData();
+            }
+        }
+        
+        // Equipment actions
+        function viewEquipment(equipmentId) {
+            const eq = equipment.find(e => e.id === equipmentId);
+            if (eq) {
+                alert(`Equipment Details:\n\nID: ${eq.id}\nName: ${eq.name}\nModel: ${eq.model}\nSerial: ${eq.serial}\nManufacturer: ${eq.manufacturer}\nStatus: ${eq.status}\nLocation: ${eq.location}\nPurchase Date: ${eq.purchaseDate}\nValue: ${eq.value}`);
+            }
+        }
+        
+        function editEquipment(equipmentId) {
+            alert(`Edit functionality for ${equipmentId} would be implemented here`);
+        }
+        
+        // Export data
+        function exportEquipmentData() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                equipment: equipment,
+                calibrationRecords: calibrationRecords,
+                maintenanceRecords: maintenanceRecords,
+                inventoryItems: inventoryItems
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `equipment-management-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        // Save data to localStorage
+        function saveData() {
+            const equipmentData = {
+                equipment: equipment,
+                calibrationRecords: calibrationRecords,
+                maintenanceRecords: maintenanceRecords,
+                inventoryItems: inventoryItems,
+                lastUpdated: new Date().toISOString()
+            };
+            localStorage.setItem('equipment-management-data', JSON.stringify(equipmentData));
+        }
+        
+        // Load data from localStorage
+        function loadData() {
+            const saved = localStorage.getItem('equipment-management-data');
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data.equipment) equipment = data.equipment;
+                if (data.calibrationRecords) calibrationRecords = data.calibrationRecords;
+                if (data.maintenanceRecords) maintenanceRecords = data.maintenanceRecords;
+                if (data.inventoryItems) inventoryItems = data.inventoryItems;
+            }
+        }
+        
+        // Initialize
+        loadData();
+        renderEquipment();
+        renderCalibrationTable();
+        renderMaintenanceTable();
+        renderInventoryTable();
+        
+        // Auto-save every 30 seconds
+        setInterval(saveData, 30000);
+        
+        // Close modal when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

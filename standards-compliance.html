@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Standards Compliance - DCS Engineer Toolkit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Fira+Code:wght@400&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        :root {
+            --neutral-900: #0A1929;
+            --neutral-800: #112240;
+            --neutral-700: #1A2D4D;
+            --neutral-500: #8892B0;
+            --neutral-300: #CCD6F6;
+            --neutral-100: #E6F1FF;
+            --primary-500: #00A8FF;
+            --primary-700: #007BBE;
+            --success: #2ECC71;
+            --info: #3498DB;
+            --warning: #F1C40F;
+            --error: #E74C3C;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--neutral-900);
+            color: var(--neutral-300);
+            line-height: 1.5;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 240px;
+            background-color: var(--neutral-800);
+            padding: 24px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 24px;
+            flex: 1;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 0 24px;
+        }
+
+        .logo h1 {
+            color: var(--neutral-100);
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .logo p {
+            color: var(--neutral-500);
+            font-size: 10px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 24px;
+            color: var(--neutral-300);
+            text-decoration: none;
+            transition: background-color 200ms ease-out;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background-color: #1A2D4D;
+        }
+
+        .nav-item.active {
+            background-color: rgba(0, 168, 255, 0.1);
+            border-left: 2px solid var(--primary-500);
+        }
+
+        .nav-item i {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            color: var(--neutral-100);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            background-color: var(--neutral-800);
+            padding: 12px 16px;
+            border-radius: 6px;
+            border: 1px solid var(--neutral-500);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-size: 12px;
+            color: var(--neutral-500);
+            white-space: nowrap;
+        }
+
+        select, input {
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            color: var(--neutral-300);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            min-width: 120px;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgba(0, 168, 255, 0.4);
+        }
+
+        .btn {
+            background-color: var(--primary-500);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 200ms ease-out;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-700);
+        }
+
+        .btn.secondary {
+            background-color: var(--neutral-700);
+            border: 1px solid var(--neutral-500);
+        }
+
+        .btn.secondary:hover {
+            background-color: var(--neutral-600);
+        }
+
+        .btn.success {
+            background-color: var(--success);
+        }
+
+        .btn.warning {
+            background-color: var(--warning);
+            color: black;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--neutral-500);
+            margin-bottom: 24px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            color: var(--neutral-500);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 200ms ease-out;
+        }
+
+        .tab.active {
+            color: var(--primary-500);
+            border-bottom-color: var(--primary-500);
+        }
+
+        .tab:hover {
+            color: var(--neutral-300);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background-color: var(--neutral-800);
+            border-radius: 8px;
+            border: 1px solid var(--neutral-500);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--neutral-500);
+            background-color: var(--neutral-700);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h3 {
+            color: var(--neutral-100);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .card-content {
+            padding: 24px;
+        }
+
+        .compliance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .compliance-card {
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            border-radius: 6px;
+            padding: 16px;
+        }
+
+        .compliance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .compliance-title {
+            color: var(--neutral-100);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .compliance-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .status-compliant { background-color: var(--success); color: white; }
+        .status-partial { background-color: var(--warning); color: black; }
+        .status-non-compliant { background-color: var(--error); color: white; }
+        .status-pending { background-color: var(--info); color: white; }
+
+        .compliance-details {
+            font-size: 13px;
+            color: var(--neutral-500);
+            margin-bottom: 8px;
+        }
+
+        .compliance-progress {
+            margin-top: 12px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--neutral-700);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--success);
+            transition: width 200ms ease-out;
+        }
+
+        .progress-label {
+            font-size: 12px;
+            color: var(--neutral-500);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background-color: var(--neutral-700);
+            color: var(--neutral-100);
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--neutral-500);
+        }
+
+        .table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--neutral-700);
+            font-size: 14px;
+        }
+
+        .table tr:hover {
+            background-color: var(--neutral-750);
+        }
+
+        .code {
+            font-family: 'Fira Code', monospace;
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 12px;
+            color: var(--neutral-100);
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .status-compliant { background-color: var(--success); color: white; }
+        .status-partial { background-color: var(--warning); color: black; }
+        .status-non-compliant { background-color: var(--error); color: white; }
+        .status-pending { background-color: var(--info); color: white; }
+
+        .report-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            color: var(--neutral-500);
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            color: var(--neutral-300);
+            padding: 10px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .checklist-item {
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .checklist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .checklist-title {
+            color: var(--neutral-100);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .checklist-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .checklist-description {
+            color: var(--neutral-500);
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .checklist-reference {
+            font-family: 'Fira Code', monospace;
+            font-size: 11px;
+            color: var(--info);
+            margin-bottom: 12px;
+        }
+
+        .checklist-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 16px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .radio-option input[type="radio"] {
+            accent-color: var(--primary-500);
+        }
+
+        .standards-tree {
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .tree-item {
+            margin-bottom: 8px;
+        }
+
+        .tree-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 200ms ease-out;
+        }
+
+        .tree-header:hover {
+            background-color: var(--neutral-700);
+        }
+
+        .tree-title {
+            color: var(--neutral-100);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .tree-children {
+            margin-left: 24px;
+            padding-left: 16px;
+            border-left: 2px solid var(--neutral-500);
+            margin-top: 8px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--neutral-800);
+            border-radius: 8px;
+            border: 1px solid var(--neutral-500);
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--neutral-500);
+            background-color: var(--neutral-700);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            color: var(--neutral-100);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--neutral-500);
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .close-btn:hover {
+            color: var(--neutral-100);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 64px;
+            }
+
+            .main-content {
+                margin-left: 64px;
+                padding: 16px;
+            }
+
+            .nav-item span {
+                display: none;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .compliance-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .report-form {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                overflow-x: auto;
+            }
+
+            .table {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <div class="logo">
+                <h1>DCS Tools</h1>
+                <p>Philippine Power Plants</p>
+            </div>
+            
+            <a href="index.html" class="nav-item">
+                <i data-lucide="home"></i>
+                <span>Dashboard</span>
+            </a>
+            
+            <a href="outage-planner.html" class="nav-item">
+                <i data-lucide="calendar"></i>
+                <span>Outage Planner</span>
+            </a>
+            
+            <a href="operations-dashboard.html" class="nav-item">
+                <i data-lucide="activity"></i>
+                <span>Operations</span>
+            </a>
+            
+            <a href="dcs-documentation.html" class="nav-item">
+                <i data-lucide="folder"></i>
+                <span>DCS Documentation</span>
+            </a>
+            
+            <a href="work-management.html" class="nav-item">
+                <i data-lucide="clipboard"></i>
+                <span>Work Management</span>
+            </a>
+            
+            <a href="equipment-management.html" class="nav-item">
+                <i data-lucide="wrench"></i>
+                <span>Equipment</span>
+            </a>
+            
+            <a href="standards-compliance.html" class="nav-item active">
+                <i data-lucide="shield"></i>
+                <span>Standards</span>
+            </a>
+            
+            <a href="daily-log.html" class="nav-item">
+                <i data-lucide="book"></i>
+                <span>Daily Log</span>
+            </a>
+        </nav>
+        
+        <main class="main-content">
+            <div class="header">
+                <div>
+                    <h1>Standards Compliance System</h1>
+                    <p>Philippine Electrical Code and DOE reporting templates</p>
+                </div>
+                <button class="btn" onclick="showNewReportModal()">
+                    <i data-lucide="plus"></i>
+                    New Report
+                </button>
+            </div>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label>Standard:</label>
+                    <select id="standardFilter" onchange="filterCompliance()">
+                        <option value="all">All Standards</option>
+                        <option value="pec">Philippine Electrical Code</option>
+                        <option value="doe">DOE Regulations</option>
+                        <option value="iso">ISO Standards</option>
+                        <option value="ieee">IEEE Standards</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label>Status:</label>
+                    <select id="statusFilter" onchange="filterCompliance()">
+                        <option value="all">All Status</option>
+                        <option value="compliant">Compliant</option>
+                        <option value="partial">Partial</option>
+                        <option value="non-compliant">Non-Compliant</option>
+                    </select>
+                </div>
+                
+                <button class="btn secondary" onclick="exportComplianceData()">
+                    <i data-lucide="download"></i>
+                    Export
+                </button>
+            </div>
+            
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('compliance-overview')">Compliance Overview</button>
+                <button class="tab" onclick="switchTab('pec-checklist')">PEC Compliance</button>
+                <button class="tab" onclick="switchTab('doe-reports')">DOE Reports</button>
+                <button class="tab" onclick="switchTab('audit-trail')">Audit Trail</button>
+            </div>
+            
+            <div id="compliance-overview" class="tab-content active">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Compliance Status Overview</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="compliance-grid" id="complianceGrid">
+                            <!-- Compliance items will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="pec-checklist" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Philippine Electrical Code (PEC) Checklist</h3>
+                        <button class="btn" onclick="saveChecklist()">Save Checklist</button>
+                    </div>
+                    <div class="card-content">
+                        <div class="standards-tree" id="standardsTree">
+                            <!-- PEC checklist will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="doe-reports" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>DOE Monthly Report</h3>
+                        <button class="btn" onclick="generateDOEReport()">Generate Report</button>
+                    </div>
+                    <div class="card-content">
+                        <div class="report-form">
+                            <div class="form-group">
+                                <label>Report Period</label>
+                                <select id="reportPeriod">
+                                    <option value="2025-01">January 2025</option>
+                                    <option value="2025-02">February 2025</option>
+                                    <option value="2025-03">March 2025</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Plant Unit</label>
+                                <select id="plantUnit">
+                                    <option value="unit1">Unit 1</option>
+                                    <option value="unit2">Unit 2</option>
+                                    <option value="both">Both Units</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Total Generation (MWh)</label>
+                                <input type="number" id="totalGeneration" placeholder="e.g., 250000">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Availability Factor (%)</label>
+                                <input type="number" id="availabilityFactor" placeholder="e.g., 95.2" step="0.1">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Forced Outage Rate (%)</label>
+                                <input type="number" id="forcedOutageRate" placeholder="e.g., 2.1" step="0.1">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Scheduled Outage Rate (%)</label>
+                                <input type="number" id="scheduledOutageRate" placeholder="e.g., 1.8" step="0.1">
+                            </div>
+                            
+                            <div class="form-group full-width">
+                                <label>Major Incidents</label>
+                                <textarea id="majorIncidents" placeholder="Report any major incidents during the period..."></textarea>
+                            </div>
+                            
+                            <div class="form-group full-width">
+                                <label>Maintenance Activities</label>
+                                <textarea id="maintenanceActivities" placeholder="Describe major maintenance activities..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <button class="btn" onclick="saveDOEReport()">Save Report</button>
+                        <button class="btn secondary" onclick="previewDOEReport()" style="margin-left: 12px;">Preview</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="audit-trail" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Compliance Audit Trail</h3>
+                    </div>
+                    <div class="card-content">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Standard</th>
+                                    <th>Activity</th>
+                                    <th>User</th>
+                                    <th>Status</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody id="auditTable">
+                                <!-- Audit trail will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- New Report Modal -->
+    <div class="modal" id="reportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>New Compliance Report</h3>
+                <button class="close-btn" onclick="closeModal('reportModal')">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Report Type</label>
+                    <select id="reportType">
+                        <option value="compliance">Compliance Report</option>
+                        <option value="audit">Audit Report</option>
+                        <option value="inspection">Inspection Report</option>
+                        <option value="corrective">Corrective Action Report</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Standard/Regulation</label>
+                    <select id="reportStandard">
+                        <option value="pec">Philippine Electrical Code</option>
+                        <option value="doe">DOE Regulations</option>
+                        <option value="iso9001">ISO 9001</option>
+                        <option value="iso14001">ISO 14001</option>
+                        <option value="ieee1547">IEEE 1547</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Report Title</label>
+                    <input type="text" id="reportTitle" placeholder="Enter report title">
+                </div>
+                
+                <div class="form-group">
+                    <label>Reporting Period</label>
+                    <input type="date" id="reportStartDate"> to 
+                    <input type="date" id="reportEndDate">
+                </div>
+                
+                <div class="form-group full-width">
+                    <label>Description</label>
+                    <textarea id="reportDescription" placeholder="Detailed description of the report..."></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                    <button class="btn secondary" onclick="closeModal('reportModal')">Cancel</button>
+                    <button class="btn" onclick="createReport()">Create Report</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Compliance data
+        let complianceItems = [
+            {
+                id: 'PEC-001',
+                title: 'Electrical Installation Safety',
+                standard: 'pec',
+                category: 'Safety Requirements',
+                status: 'compliant',
+                progress: 100,
+                lastChecked: '2025-01-15',
+                checkedBy: 'Eng. Santos',
+                description: 'All electrical installations comply with PEC safety requirements including proper grounding, protection, and labeling.'
+            },
+            {
+                id: 'PEC-002',
+                title: 'Control System Grounding',
+                standard: 'pec',
+                category: 'Grounding Systems',
+                status: 'partial',
+                progress: 75,
+                lastChecked: '2025-01-10',
+                checkedBy: 'Eng. Rodriguez',
+                description: 'DCS system grounding partially compliant. Some cabinets require additional grounding conductors.'
+            },
+            {
+                id: 'DOE-001',
+                title: 'Environmental Monitoring',
+                standard: 'doe',
+                category: 'Environmental Compliance',
+                status: 'compliant',
+                progress: 100,
+                lastChecked: '2025-01-12',
+                checkedBy: 'Env. Officer Cruz',
+                description: 'All environmental monitoring systems operational and reporting within DOE requirements.'
+            },
+            {
+                id: 'DOE-002',
+                title: 'Safety Management System',
+                standard: 'doe',
+                category: 'Safety Compliance',
+                status: 'compliant',
+                progress: 100,
+                lastChecked: '2025-01-08',
+                checkedBy: 'Safety Officer dela Cruz',
+                description: 'Safety management system meets DOE requirements with documented procedures and regular audits.'
+            },
+            {
+                id: 'ISO-001',
+                title: 'Quality Management System',
+                standard: 'iso',
+                category: 'Quality Assurance',
+                status: 'partial',
+                progress: 85,
+                lastChecked: '2025-01-05',
+                checkedBy: 'QA Manager Mendoza',
+                description: 'ISO 9001 implementation ongoing. Documentation updates needed for DCS procedures.'
+            },
+            {
+                id: 'IEEE-001',
+                title: 'Power System Interconnection',
+                standard: 'ieee',
+                category: 'Interconnection Standards',
+                status: 'compliant',
+                progress: 100,
+                lastChecked: '2025-01-18',
+                checkedBy: 'System Engineer Cruz',
+                description: 'Generator interconnection complies with IEEE 1547 standard requirements.'
+            }
+        ];
+        
+        // PEC Checklist data
+        let pecChecklist = [
+            {
+                id: 'pec-1-1',
+                title: '1.1 General Electrical Installation Requirements',
+                reference: 'PEC Rule 1.1',
+                description: 'All electrical installations shall comply with the minimum requirements specified in this code.',
+                status: 'compliant',
+                children: [
+                    {
+                        id: 'pec-1-1-1',
+                        title: '1.1.1 Adequate Electrical Service',
+                        reference: 'PEC Rule 1.1.1',
+                        description: 'Electrical service capacity shall be adequate for the connected load.',
+                        status: 'compliant'
+                    },
+                    {
+                        id: 'pec-1-1-2',
+                        title: '1.1.2 Proper Installation Methods',
+                        reference: 'PEC Rule 1.1.2',
+                        description: 'Installation methods shall follow approved standards and practices.',
+                        status: 'partial'
+                    }
+                ]
+            },
+            {
+                id: 'pec-2-1',
+                title: '2.1 Grounding and Bonding',
+                reference: 'PEC Rule 2.1',
+                description: 'Electrical systems shall be grounded and bonded in accordance with this section.',
+                status: 'partial',
+                children: [
+                    {
+                        id: 'pec-2-1-1',
+                        title: '2.1.1 System Grounding',
+                        reference: 'PEC Rule 2.1.1',
+                        description: 'Electrical systems shall be grounded as specified.',
+                        status: 'partial'
+                    },
+                    {
+                        id: 'pec-2-1-2',
+                        title: '2.1.2 Equipment Grounding',
+                        reference: 'PEC Rule 2.1.2',
+                        description: 'Non-current-carrying metal parts of equipment shall be grounded.',
+                        status: 'compliant'
+                    }
+                ]
+            },
+            {
+                id: 'pec-3-1',
+                title: '3.1 Wiring Methods and Materials',
+                reference: 'PEC Rule 3.1',
+                description: 'Wiring methods and materials shall be selected and installed according to the requirements.',
+                status: 'compliant',
+                children: [
+                    {
+                        id: 'pec-3-1-1',
+                        title: '3.1.1 Conduit Systems',
+                        reference: 'PEC Rule 3.1.1',
+                        description: 'Conduit systems shall be properly installed and supported.',
+                        status: 'compliant'
+                    },
+                    {
+                        id: 'pec-3-1-2',
+                        title: '3.1.2 Cable Systems',
+                        reference: 'PEC Rule 3.1.2',
+                        description: 'Cable systems shall be selected and installed according to application.',
+                        status: 'compliant'
+                    }
+                ]
+            }
+        ];
+        
+        // DOE Reports data
+        let doeReports = [
+            {
+                id: 'DOE-2025-01',
+                period: '2025-01',
+                unit: 'unit1',
+                totalGeneration: 245680,
+                availabilityFactor: 94.2,
+                forcedOutageRate: 2.1,
+                scheduledOutageRate: 1.5,
+                status: 'submitted',
+                submittedDate: '2025-02-05',
+                submittedBy: 'Plant Manager'
+            },
+            {
+                id: 'DOE-2024-12',
+                period: '2024-12',
+                unit: 'unit2',
+                totalGeneration: 238950,
+                availabilityFactor: 96.8,
+                forcedOutageRate: 1.2,
+                scheduledOutageRate: 0.8,
+                status: 'approved',
+                submittedDate: '2025-01-05',
+                submittedBy: 'Plant Manager'
+            }
+        ];
+        
+        // Audit trail data
+        let auditTrail = [
+            {
+                date: '2025-01-18 14:30',
+                standard: 'PEC',
+                activity: 'Compliance Check - Electrical Installation',
+                user: 'Eng. Santos',
+                status: 'compliant',
+                remarks: 'All safety requirements met'
+            },
+            {
+                date: '2025-01-17 10:15',
+                standard: 'DOE',
+                activity: 'Monthly Report Submission',
+                user: 'Plant Manager',
+                status: 'submitted',
+                remarks: 'Report submitted to DOE regional office'
+            },
+            {
+                date: '2025-01-16 16:45',
+                standard: 'ISO',
+                activity: 'Internal Quality Audit',
+                user: 'QA Manager Mendoza',
+                status: 'partial',
+                remarks: 'Documentation updates required'
+            },
+            {
+                date: '2025-01-15 09:20',
+                standard: 'IEEE',
+                activity: 'System Interconnection Review',
+                user: 'System Engineer Cruz',
+                status: 'compliant',
+                remarks: 'IEEE 1547 compliance verified'
+            },
+            {
+                date: '2025-01-14 13:30',
+                standard: 'PEC',
+                activity: 'Grounding System Inspection',
+                user: 'Eng. Rodriguez',
+                status: 'partial',
+                remarks: 'Additional grounding conductors needed'
+            }
+        ];
+        
+        // Render compliance overview
+        function renderComplianceOverview() {
+            const complianceGrid = document.getElementById('complianceGrid');
+            complianceGrid.innerHTML = '';
+            
+            const standardFilter = document.getElementById('standardFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            
+            let filteredItems = complianceItems;
+            
+            if (standardFilter !== 'all') {
+                filteredItems = filteredItems.filter(item => item.standard === standardFilter);
+            }
+            
+            if (statusFilter !== 'all') {
+                filteredItems = filteredItems.filter(item => item.status === statusFilter);
+            }
+            
+            filteredItems.forEach(item => {
+                const complianceCard = document.createElement('div');
+                complianceCard.className = 'compliance-card';
+                complianceCard.innerHTML = `
+                    <div class="compliance-header">
+                        <span class="compliance-title">${item.title}</span>
+                        <span class="compliance-status status-${item.status}">${item.status}</span>
+                    </div>
+                    <div class="compliance-details">
+                        <div><strong>Standard:</strong> ${item.standard.toUpperCase()}</div>
+                        <div><strong>Category:</strong> ${item.category}</div>
+                        <div><strong>Last Checked:</strong> ${item.lastChecked}</div>
+                        <div><strong>Checked By:</strong> ${item.checkedBy}</div>
+                    </div>
+                    <div class="compliance-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${item.progress}%"></div>
+                        </div>
+                        <div class="progress-label">${item.progress}% Complete</div>
+                    </div>
+                `;
+                complianceGrid.appendChild(complianceCard);
+            });
+        }
+        
+        // Render PEC checklist
+        function renderPECChecklist() {
+            const standardsTree = document.getElementById('standardsTree');
+            standardsTree.innerHTML = '';
+            
+            pecChecklist.forEach(item => {
+                const treeItem = document.createElement('div');
+                treeItem.className = 'tree-item';
+                treeItem.innerHTML = `
+                    <div class="tree-header" onclick="toggleChildren('${item.id}')">
+                        <span class="compliance-status status-${item.status}">${item.status}</span>
+                        <span class="tree-title">${item.title}</span>
+                    </div>
+                    <div class="checklist-item" id="checklist-${item.id}">
+                        <div class="checklist-description">${item.description}</div>
+                        <div class="checklist-reference">${item.reference}</div>
+                        <div class="checklist-status">
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="${item.id}" value="compliant" ${item.status === 'compliant' ? 'checked' : ''}>
+                                    Compliant
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="${item.id}" value="partial" ${item.status === 'partial' ? 'checked' : ''}>
+                                    Partial
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="${item.id}" value="non-compliant" ${item.status === 'non-compliant' ? 'checked' : ''}>
+                                    Non-Compliant
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tree-children" id="children-${item.id}" style="display: none;">
+                        ${item.children ? item.children.map(child => `
+                            <div class="checklist-item">
+                                <div class="checklist-header">
+                                    <span class="checklist-title">${child.title}</span>
+                                    <span class="compliance-status status-${child.status}">${child.status}</span>
+                                </div>
+                                <div class="checklist-description">${child.description}</div>
+                                <div class="checklist-reference">${child.reference}</div>
+                                <div class="checklist-status">
+                                    <div class="radio-group">
+                                        <label class="radio-option">
+                                            <input type="radio" name="${child.id}" value="compliant" ${child.status === 'compliant' ? 'checked' : ''}>
+                                            Compliant
+                                        </label>
+                                        <label class="radio-option">
+                                            <input type="radio" name="${child.id}" value="partial" ${child.status === 'partial' ? 'checked' : ''}>
+                                            Partial
+                                        </label>
+                                        <label class="radio-option">
+                                            <input type="radio" name="${child.id}" value="non-compliant" ${child.status === 'non-compliant' ? 'checked' : ''}>
+                                            Non-Compliant
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('') : ''}
+                    </div>
+                `;
+                standardsTree.appendChild(treeItem);
+            });
+        }
+        
+        // Toggle checklist children
+        function toggleChildren(itemId) {
+            const childrenDiv = document.getElementById(`children-${itemId}`);
+            const checklistDiv = document.getElementById(`checklist-${itemId}`);
+            
+            if (childrenDiv.style.display === 'none') {
+                childrenDiv.style.display = 'block';
+                checklistDiv.style.display = 'none';
+            } else {
+                childrenDiv.style.display = 'none';
+                checklistDiv.style.display = 'block';
+            }
+        }
+        
+        // Render DOE reports table
+        function renderDOEReports() {
+            // DOE reports are displayed in the tab content
+        }
+        
+        // Render audit trail
+        function renderAuditTrail() {
+            const table = document.getElementById('auditTable');
+            table.innerHTML = '';
+            
+            auditTrail.forEach(entry => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${entry.date}</td>
+                    <td>${entry.standard}</td>
+                    <td>${entry.activity}</td>
+                    <td>${entry.user}</td>
+                    <td><span class="status-badge status-${entry.status}">${entry.status}</span></td>
+                    <td>${entry.remarks}</td>
+                `;
+                table.appendChild(row);
+            });
+        }
+        
+        // Switch tabs
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Render specific tab content
+            if (tabId === 'compliance-overview') {
+                renderComplianceOverview();
+            } else if (tabId === 'pec-checklist') {
+                renderPECChecklist();
+            } else if (tabId === 'doe-reports') {
+                renderDOEReports();
+            } else if (tabId === 'audit-trail') {
+                renderAuditTrail();
+            }
+        }
+        
+        // Filter compliance
+        function filterCompliance() {
+            renderComplianceOverview();
+        }
+        
+        // Show new report modal
+        function showNewReportModal() {
+            document.getElementById('reportModal').classList.add('active');
+        }
+        
+        // Close modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+        
+        // Create new report
+        function createReport() {
+            const newReport = {
+                id: `RPT-2025-${String(auditTrail.length + 1).padStart(3, '0')}`,
+                date: new Date().toISOString(),
+                standard: document.getElementById('reportStandard').value.toUpperCase(),
+                activity: document.getElementById('reportTitle').value,
+                user: 'Current User',
+                status: 'pending',
+                remarks: 'New report created'
+            };
+            
+            auditTrail.unshift(newReport);
+            renderAuditTrail();
+            closeModal('reportModal');
+            saveData();
+        }
+        
+        // Save checklist
+        function saveChecklist() {
+            const checkboxes = document.querySelectorAll('input[type="radio"]:checked');
+            checkboxes.forEach(checkbox => {
+                const name = checkbox.name;
+                const value = checkbox.value;
+                
+                // Find and update the checklist item
+                pecChecklist.forEach(item => {
+                    if (item.id === name) {
+                        item.status = value;
+                    }
+                    if (item.children) {
+                        item.children.forEach(child => {
+                            if (child.id === name) {
+                                child.status = value;
+                            }
+                        });
+                    }
+                });
+            });
+            
+            alert('Checklist saved successfully!');
+            renderPECChecklist();
+            saveData();
+        }
+        
+        // Generate DOE report
+        function generateDOEReport() {
+            const reportPeriod = document.getElementById('reportPeriod').value;
+            const plantUnit = document.getElementById('plantUnit').value;
+            const totalGeneration = document.getElementById('totalGeneration').value;
+            const availabilityFactor = document.getElementById('availabilityFactor').value;
+            const forcedOutageRate = document.getElementById('forcedOutageRate').value;
+            const scheduledOutageRate = document.getElementById('scheduledOutageRate').value;
+            
+            const reportData = `
+DOE MONTHLY REPORT
+Period: ${reportPeriod}
+Plant Unit: ${plantUnit}
+
+OPERATIONAL METRICS:
+- Total Generation: ${totalGeneration} MWh
+- Availability Factor: ${availabilityFactor}%
+- Forced Outage Rate: ${forcedOutageRate}%
+- Scheduled Outage Rate: ${scheduledOutageRate}%
+
+MAJOR INCIDENTS:
+${document.getElementById('majorIncidents').value || 'None reported'}
+
+MAINTENANCE ACTIVITIES:
+${document.getElementById('maintenanceActivities').value || 'Routine maintenance performed'}
+
+Generated on: ${new Date().toLocaleDateString()}
+            `;
+            
+            alert('DOE Report Generated:\n\n' + reportData);
+        }
+        
+        // Save DOE report
+        function saveDOEReport() {
+            const newReport = {
+                id: `DOE-${document.getElementById('reportPeriod').value.replace('-', '')}-${Date.now()}`,
+                period: document.getElementById('reportPeriod').value,
+                unit: document.getElementById('plantUnit').value,
+                totalGeneration: parseInt(document.getElementById('totalGeneration').value) || 0,
+                availabilityFactor: parseFloat(document.getElementById('availabilityFactor').value) || 0,
+                forcedOutageRate: parseFloat(document.getElementById('forcedOutageRate').value) || 0,
+                scheduledOutageRate: parseFloat(document.getElementById('scheduledOutageRate').value) || 0,
+                status: 'draft',
+                submittedDate: new Date().toISOString(),
+                submittedBy: 'Current User'
+            };
+            
+            doeReports.unshift(newReport);
+            alert('DOE Report saved successfully!');
+            saveData();
+        }
+        
+        // Preview DOE report
+        function previewDOEReport() {
+            generateDOEReport();
+        }
+        
+        // Export compliance data
+        function exportComplianceData() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                complianceItems: complianceItems,
+                pecChecklist: pecChecklist,
+                doeReports: doeReports,
+                auditTrail: auditTrail
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `standards-compliance-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        // Save data to localStorage
+        function saveData() {
+            const complianceData = {
+                complianceItems: complianceItems,
+                pecChecklist: pecChecklist,
+                doeReports: doeReports,
+                auditTrail: auditTrail,
+                lastUpdated: new Date().toISOString()
+            };
+            localStorage.setItem('standards-compliance-data', JSON.stringify(complianceData));
+        }
+        
+        // Load data from localStorage
+        function loadData() {
+            const saved = localStorage.getItem('standards-compliance-data');
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data.complianceItems) complianceItems = data.complianceItems;
+                if (data.pecChecklist) pecChecklist = data.pecChecklist;
+                if (data.doeReports) doeReports = data.doeReports;
+                if (data.auditTrail) auditTrail = data.auditTrail;
+            }
+        }
+        
+        // Initialize
+        loadData();
+        renderComplianceOverview();
+        renderPECChecklist();
+        renderAuditTrail();
+        
+        // Auto-save every 30 seconds
+        setInterval(saveData, 30000);
+        
+        // Close modal when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

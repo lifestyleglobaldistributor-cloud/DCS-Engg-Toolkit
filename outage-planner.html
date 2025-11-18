@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outage Planner - DCS Engineer Toolkit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Fira+Code:wght@400&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        :root {
+            --neutral-900: #0A1929;
+            --neutral-800: #112240;
+            --neutral-500: #8892B0;
+            --neutral-300: #CCD6F6;
+            --neutral-100: #E6F1FF;
+            --primary-500: #00A8FF;
+            --primary-700: #007BBE;
+            --success: #2ECC71;
+            --info: #3498DB;
+            --warning: #F1C40F;
+            --error: #E74C3C;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--neutral-900);
+            color: var(--neutral-300);
+            line-height: 1.5;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 240px;
+            background-color: var(--neutral-800);
+            padding: 24px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 24px;
+            flex: 1;
+            overflow-x: auto;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 0 24px;
+        }
+
+        .logo h1 {
+            color: var(--neutral-100);
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .logo p {
+            color: var(--neutral-500);
+            font-size: 10px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 24px;
+            color: var(--neutral-300);
+            text-decoration: none;
+            transition: background-color 200ms ease-out;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background-color: #1A2D4D;
+        }
+
+        .nav-item.active {
+            background-color: rgba(0, 168, 255, 0.1);
+            border-left: 2px solid var(--primary-500);
+        }
+
+        .nav-item i {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+        }
+
+        .header {
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            color: var(--neutral-100);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            background-color: var(--neutral-800);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--neutral-500);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .control-group label {
+            font-size: 12px;
+            color: var(--neutral-500);
+            white-space: nowrap;
+        }
+
+        select, input {
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            color: var(--neutral-300);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            min-width: 150px;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgba(0, 168, 255, 0.4);
+        }
+
+        .btn {
+            background-color: var(--primary-500);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 200ms ease-out;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-700);
+        }
+
+        .btn.secondary {
+            background-color: var(--neutral-700);
+            border: 1px solid var(--neutral-500);
+        }
+
+        .btn.secondary:hover {
+            background-color: var(--neutral-600);
+        }
+
+        .gantt-container {
+            background-color: var(--neutral-800);
+            border-radius: 8px;
+            border: 1px solid var(--neutral-500);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .gantt-header {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            border-bottom: 1px solid var(--neutral-500);
+            background-color: var(--neutral-700);
+        }
+
+        .gantt-tasks-header, .gantt-timeline-header {
+            padding: 16px;
+            font-weight: 600;
+            color: var(--neutral-100);
+        }
+
+        .gantt-timeline {
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 500px;
+        }
+
+        .gantt-row {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            border-bottom: 1px solid var(--neutral-700);
+            min-height: 48px;
+        }
+
+        .task-name {
+            padding: 12px 16px;
+            border-right: 1px solid var(--neutral-700);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .task-name .priority {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .priority.high { background-color: var(--error); }
+        .priority.medium { background-color: var(--warning); }
+        .priority.low { background-color: var(--success); }
+
+        .task-timeline {
+            position: relative;
+            padding: 8px;
+        }
+
+        .task-bar {
+            position: absolute;
+            height: 32px;
+            border-radius: 4px;
+            color: var(--neutral-100);
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: move;
+            transition: all 200ms ease-out;
+            z-index: 1;
+        }
+
+        .task-bar:hover {
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+        }
+
+        .task-bar.dragging {
+            opacity: 0.8;
+            z-index: 10;
+        }
+
+        .task-bar.default {
+            background-color: var(--primary-500);
+        }
+
+        .task-bar.at-risk {
+            background-color: var(--warning);
+        }
+
+        .task-bar.overdue {
+            background-color: var(--error);
+        }
+
+        .task-bar.completed {
+            background-color: var(--success);
+            opacity: 0.7;
+        }
+
+        .timeline-scale {
+            display: flex;
+            border-bottom: 1px solid var(--neutral-700);
+            background-color: var(--neutral-750);
+        }
+
+        .timeline-day {
+            min-width: 60px;
+            text-align: center;
+            padding: 8px;
+            font-size: 11px;
+            border-right: 1px solid var(--neutral-700);
+            color: var(--neutral-500);
+        }
+
+        .task-list {
+            background-color: var(--neutral-800);
+            border-radius: 8px;
+            border: 1px solid var(--neutral-500);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .task-list h3 {
+            color: var(--neutral-100);
+            font-size: 18px;
+            margin-bottom: 16px;
+        }
+
+        .task-item {
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: move;
+            transition: all 200ms ease-out;
+        }
+
+        .task-item:hover {
+            border-color: var(--primary-500);
+        }
+
+        .task-item h4 {
+            color: var(--neutral-100);
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .task-item p {
+            color: var(--neutral-500);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .task-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--neutral-500);
+        }
+
+        .risk-assessment {
+            background-color: var(--neutral-800);
+            border-radius: 8px;
+            border: 1px solid var(--neutral-500);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .risk-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--neutral-700);
+        }
+
+        .risk-item:last-child {
+            border-bottom: none;
+        }
+
+        .risk-level {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .risk-level.critical { background-color: var(--error); color: white; }
+        .risk-level.high { background-color: var(--warning); color: black; }
+        .risk-level.medium { background-color: var(--info); color: white; }
+        .risk-level.low { background-color: var(--success); color: white; }
+
+        .loto-tracker {
+            background-color: var(--neutral-800);
+            border-radius: 8px;
+            border: 1px solid var(--neutral-500);
+            padding: 24px;
+        }
+
+        .loto-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background-color: var(--neutral-900);
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        .loto-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .loto-status.active { background-color: var(--warning); color: black; }
+        .loto-status.completed { background-color: var(--success); color: white; }
+        .loto-status.pending { background-color: var(--info); color: white; }
+
+        .tooltip {
+            position: absolute;
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 12px;
+            z-index: 100;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 200ms ease-out;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 64px;
+            }
+
+            .main-content {
+                margin-left: 64px;
+                padding: 16px;
+            }
+
+            .nav-item span {
+                display: none;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .gantt-row {
+                grid-template-columns: 200px 1fr;
+            }
+
+            .task-name {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <div class="logo">
+                <h1>DCS Tools</h1>
+                <p>Philippine Power Plants</p>
+            </div>
+            
+            <a href="index.html" class="nav-item">
+                <i data-lucide="home"></i>
+                <span>Dashboard</span>
+            </a>
+            
+            <a href="outage-planner.html" class="nav-item active">
+                <i data-lucide="calendar"></i>
+                <span>Outage Planner</span>
+            </a>
+            
+            <a href="operations-dashboard.html" class="nav-item">
+                <i data-lucide="activity"></i>
+                <span>Operations</span>
+            </a>
+            
+            <a href="dcs-documentation.html" class="nav-item">
+                <i data-lucide="folder"></i>
+                <span>DCS Documentation</span>
+            </a>
+            
+            <a href="work-management.html" class="nav-item">
+                <i data-lucide="clipboard"></i>
+                <span>Work Management</span>
+            </a>
+            
+            <a href="equipment-management.html" class="nav-item">
+                <i data-lucide="wrench"></i>
+                <span>Equipment</span>
+            </a>
+            
+            <a href="standards-compliance.html" class="nav-item">
+                <i data-lucide="shield"></i>
+                <span>Standards</span>
+            </a>
+            
+            <a href="daily-log.html" class="nav-item">
+                <i data-lucide="book"></i>
+                <span>Daily Log</span>
+            </a>
+        </nav>
+        
+        <main class="main-content">
+            <div class="header">
+                <h1>Outage & Major Maintenance Planner</h1>
+                <p>Critical path planning with DCS-specific jobs and LOTO tracking</p>
+            </div>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label>Outage Type:</label>
+                    <select id="outageType">
+                        <option value="annual">Annual Outage</option>
+                        <option value="major">Major Maintenance</option>
+                        <option value="emergency">Emergency Shutdown</option>
+                        <option value="unit">Unit Outage</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label>Start Date:</label>
+                    <input type="date" id="startDate">
+                </div>
+                
+                <div class="control-group">
+                    <label>Duration:</label>
+                    <select id="duration">
+                        <option value="7">7 Days</option>
+                        <option value="14" selected>14 Days</option>
+                        <option value="21">21 Days</option>
+                        <option value="30">30 Days</option>
+                    </select>
+                </div>
+                
+                <button class="btn" onclick="addTask()">
+                    <i data-lucide="plus"></i>
+                    Add Task
+                </button>
+                
+                <button class="btn secondary" onclick="exportData()">
+                    <i data-lucide="download"></i>
+                    Export
+                </button>
+            </div>
+            
+            <div class="task-list">
+                <h3>Pre-loaded DCS Outage Jobs</h3>
+                <div class="task-item" draggable="true" data-task-id="1">
+                    <h4>Logic Modification Window</h4>
+                    <p>Update control logic for boiler optimization and safety systems</p>
+                    <div class="task-meta">
+                        <span>Duration: 4 hours</span>
+                        <span>Priority: <span class="priority high"></span> High</span>
+                        <span>System: All DCS</span>
+                    </div>
+                </div>
+                
+                <div class="task-item" draggable="true" data-task-id="2">
+                    <h4>HMI Upgrade & Configuration</h4>
+                    <p>Human Machine Interface upgrade, theme updates, alarm configuration</p>
+                    <div class="task-meta">
+                        <span>Duration: 8 hours</span>
+                        <span>Priority: <span class="priority medium"></span> Medium</span>
+                        <span>System: HMI/SCADA</span>
+                    </div>
+                </div>
+                
+                <div class="task-item" draggable="true" data-task-id="3">
+                    <h4>Controller Firmware Update</h4>
+                    <p>Update controller firmware, test redundancy, verify performance</p>
+                    <div class="task-meta">
+                        <span>Duration: 6 hours</span>
+                        <span>Priority: <span class="priority high"></span> High</span>
+                        <span>System: Controllers</span>
+                    </div>
+                </div>
+                
+                <div class="task-item" draggable="true" data-task-id="4">
+                    <h4>Network Redundancy Test</h4>
+                    <p>Test network switches, redundancy paths, fail-over procedures</p>
+                    <div class="task-meta">
+                        <span>Duration: 3 hours</span>
+                        <span>Priority: <span class="priority high"></span> High</span>
+                        <span>System: Network</span>
+                    </div>
+                </div>
+                
+                <div class="task-item" draggable="true" data-task-id="5">
+                    <h4>I/O Module Calibration</h4>
+                    <p>Calibrate I/O modules, verify signal integrity, test fail-safe</p>
+                    <div class="task-meta">
+                        <span>Duration: 12 hours</span>
+                        <span>Priority: <span class="priority medium"></span> Medium</span>
+                        <span>System: I/O Systems</span>
+                    </div>
+                </div>
+                
+                <div class="task-item" draggable="true" data-task-id="6">
+                    <h4>Database Backup & Archive</h4>
+                    <p>Full DCS database backup, historical data archive, configuration export</p>
+                    <div class="task-meta">
+                        <span>Duration: 2 hours</span>
+                        <span>Priority: <span class="priority medium"></span> Medium</span>
+                        <span>System: Database</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="gantt-container">
+                <div class="gantt-header">
+                    <div class="gantt-tasks-header">Tasks & Timeline</div>
+                    <div class="gantt-timeline-header">
+                        <div class="timeline-scale" id="timelineScale">
+                            <!-- Timeline will be generated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                <div class="gantt-timeline">
+                    <div class="gantt-row">
+                        <div class="task-name">
+                            <div class="priority low"></div>
+                            Planned Outage Schedule
+                        </div>
+                        <div class="task-timeline" id="ganttChart">
+                            <!-- Gantt chart will be generated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                <div class="risk-assessment">
+                    <h3>Risk Assessment</h3>
+                    <div class="risk-item">
+                        <span>Network Isolation Risk</span>
+                        <span class="risk-level high">High</span>
+                    </div>
+                    <div class="risk-item">
+                        <span>Control System Downtime</span>
+                        <span class="risk-level critical">Critical</span>
+                    </div>
+                    <div class="risk-item">
+                        <span>Safety System Bypass</span>
+                        <span class="risk-level critical">Critical</span>
+                    </div>
+                    <div class="risk-item">
+                        <span>Communication Loss</span>
+                        <span class="risk-level medium">Medium</span>
+                    </div>
+                </div>
+                
+                <div class="loto-tracker">
+                    <h3>LOTO Tracker</h3>
+                    <div class="loto-item">
+                        <span>Unit 1 - Main Breaker</span>
+                        <span class="loto-status active">Active</span>
+                    </div>
+                    <div class="loto-item">
+                        <span>Boiler Feed Pumps</span>
+                        <span class="loto-status completed">Completed</span>
+                    </div>
+                    <div class="loto-item">
+                        <span>DCS Network Switch</span>
+                        <span class="loto-status pending">Pending</span>
+                    </div>
+                    <div class="loto-item">
+                        <span>Control Room AC</span>
+                        <span class="loto-status completed">Completed</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <div class="tooltip" id="taskTooltip">
+        <div id="tooltipContent"></div>
+    </div>
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Task data structure
+        let tasks = [
+            { id: 1, name: 'Logic Modification Window', duration: 4, priority: 'high', assignee: 'DCS Team', status: 'default' },
+            { id: 2, name: 'HMI Upgrade & Configuration', duration: 8, priority: 'medium', assignee: 'HMI Team', status: 'default' },
+            { id: 3, name: 'Controller Firmware Update', duration: 6, priority: 'high', assignee: 'Controller Team', status: 'default' },
+            { id: 4, name: 'Network Redundancy Test', duration: 3, priority: 'high', assignee: 'Network Team', status: 'default' },
+            { id: 5, name: 'I/O Module Calibration', duration: 12, priority: 'medium', assignee: 'I/O Team', status: 'default' },
+            { id: 6, name: 'Database Backup & Archive', duration: 2, priority: 'medium', assignee: 'Database Team', status: 'completed' }
+        ];
+        
+        // Generate timeline
+        function generateTimeline() {
+            const startDate = new Date();
+            const timelineScale = document.getElementById('timelineScale');
+            timelineScale.innerHTML = '';
+            
+            for (let i = 0; i < 30; i++) {
+                const date = new Date(startDate);
+                date.setDate(date.getDate() + i);
+                const dayElement = document.createElement('div');
+                dayElement.className = 'timeline-day';
+                dayElement.innerHTML = `${date.getDate()}<br>${date.toLocaleDateString('en', { month: 'short' })}`;
+                timelineScale.appendChild(dayElement);
+            }
+        }
+        
+        // Generate Gantt chart
+        function generateGanttChart() {
+            const ganttChart = document.getElementById('ganttChart');
+            ganttChart.innerHTML = '';
+            
+            tasks.forEach((task, index) => {
+                const taskBar = document.createElement('div');
+                taskBar.className = `task-bar ${task.status}`;
+                taskBar.style.left = `${index * 80}px`;
+                taskBar.style.width = `${task.duration * 20}px`;
+                taskBar.style.top = `${index * 40 + 8}px`;
+                taskBar.textContent = task.name;
+                
+                // Add tooltip
+                taskBar.addEventListener('mouseenter', function(e) {
+                    const tooltip = document.getElementById('taskTooltip');
+                    const content = document.getElementById('tooltipContent');
+                    content.innerHTML = `
+                        <strong>${task.name}</strong><br>
+                        Duration: ${task.duration} hours<br>
+                        Assignee: ${task.assignee}<br>
+                        Priority: ${task.priority}
+                    `;
+                    tooltip.style.left = e.pageX + 10 + 'px';
+                    tooltip.style.top = e.pageY - 10 + 'px';
+                    tooltip.classList.add('show');
+                });
+                
+                taskBar.addEventListener('mouseleave', function() {
+                    document.getElementById('taskTooltip').classList.remove('show');
+                });
+                
+                // Drag functionality
+                taskBar.draggable = true;
+                taskBar.addEventListener('dragstart', function(e) {
+                    e.dataTransfer.setData('text/plain', task.id);
+                    this.classList.add('dragging');
+                });
+                
+                taskBar.addEventListener('dragend', function() {
+                    this.classList.remove('dragging');
+                });
+                
+                ganttChart.appendChild(taskBar);
+            });
+        }
+        
+        // Add new task
+        function addTask() {
+            const taskName = prompt('Enter task name:');
+            if (taskName) {
+                const newTask = {
+                    id: tasks.length + 1,
+                    name: taskName,
+                    duration: 4,
+                    priority: 'medium',
+                    assignee: 'New Team',
+                    status: 'default'
+                };
+                tasks.push(newTask);
+                generateGanttChart();
+                saveData();
+            }
+        }
+        
+        // Export data
+        function exportData() {
+            const data = {
+                outageType: document.getElementById('outageType').value,
+                startDate: document.getElementById('startDate').value,
+                duration: document.getElementById('duration').value,
+                tasks: tasks,
+                risks: [
+                    { name: 'Network Isolation Risk', level: 'high' },
+                    { name: 'Control System Downtime', level: 'critical' },
+                    { name: 'Safety System Bypass', level: 'critical' },
+                    { name: 'Communication Loss', level: 'medium' }
+                ],
+                lotoItems: [
+                    { name: 'Unit 1 - Main Breaker', status: 'active' },
+                    { name: 'Boiler Feed Pumps', status: 'completed' },
+                    { name: 'DCS Network Switch', status: 'pending' },
+                    { name: 'Control Room AC', status: 'completed' }
+                ],
+                exportedAt: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `outage-plan-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('outage-planner-data', JSON.stringify({
+                tasks: tasks,
+                lastUpdated: new Date().toISOString()
+            }));
+        }
+        
+        // Load data from localStorage
+        function loadData() {
+            const saved = localStorage.getItem('outage-planner-data');
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data.tasks) {
+                    tasks = data.tasks;
+                }
+            }
+        }
+        
+        // Initialize
+        generateTimeline();
+        loadData();
+        generateGanttChart();
+        
+        // Auto-save every 30 seconds
+        setInterval(saveData, 30000);
+        
+        // Handle drag and drop for task items
+        document.querySelectorAll('.task-item').forEach(item => {
+            item.addEventListener('dragstart', function(e) {
+                e.dataTransfer.setData('text/plain', this.dataset.taskId);
+            });
+        });
+    </script>
+</body>
+</html>

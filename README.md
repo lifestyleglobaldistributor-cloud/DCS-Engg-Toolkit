@@ -1,259 +1,323 @@
-# DCS-Engg-Toolkit
-Features
+# DCS Engineer Toolkit for Philippine Power Plants
 
-Complete Offline Functionality
+A comprehensive, offline-capable HTML toolkit designed specifically for DCS Engineers working in Philippine power plants. This professional-grade software provides all essential tools for daily operations, maintenance, and compliance management.
 
-No Internet Required: Works completely offline using localStorage
-Cross-Platform: Compatible with all modern browsers
-Mobile-Friendly: Optimized for tablets and smartphones
-Data Persistence: All data automatically saved locally
-Professional Philippine Power Plant Design
+## 🚀 Features
 
-Industrial Dark Theme: Dark blue/gray color scheme
-Alarm Color Coding: Red (critical), Yellow (warning), Green (normal), Blue (informational)
-Touch-Optimized: Designed for tablet use in control rooms
-Print-Ready: Professional layouts for physical documentation
-📋 Available Tools
+### Complete Offline Functionality
+- **No Internet Required**: Works completely offline using localStorage
+- **Cross-Platform**: Compatible with all modern browsers
+- **Mobile-Friendly**: Optimized for tablets and smartphones
+- **Data Persistence**: All data automatically saved locally
 
-1. Main Dashboard (index.html)
+### Professional Philippine Power Plant Design
+- **Industrial Dark Theme**: Dark blue/gray color scheme
+- **Alarm Color Coding**: Red (critical), Yellow (warning), Green (normal), Blue (informational)
+- **Touch-Optimized**: Designed for tablet use in control rooms
+- **Print-Ready**: Professional layouts for physical documentation
 
-Overview of all tools and quick statistics
-Central navigation hub
-Real-time status indicators
-Quick access to all modules
-2. Outage & Major Maintenance Planner (outage-planner.html)
+## 📋 Available Tools
 
-Gantt-style timeline with drag-and-drop functionality
-Pre-loaded DCS outage jobs:
-Logic modification windows
-HMI upgrades and configuration
-Controller firmware updates
-Network redundancy tests
-I/O module calibration
-Database backup and archiving
-Manpower allocation tracking
-Risk assessment matrix
-LOTO (Lockout/Tagout) tracker
-Excel export capabilities
-3. Operations Dashboard (operations-dashboard.html)
+### 1. **Main Dashboard** (`index.html`)
+- Overview of all tools and quick statistics
+- Central navigation hub
+- Real-time status indicators
+- Quick access to all modules
 
-Real-time plant parameter monitoring:
-Unit output (MW)
-Main steam pressure
-Boiler temperature
-Turbine speed
-Generator voltage
-Feedwater flow
-Alarm management system with color-coded severity
-DCS system status for major platforms:
-Emerson Ovation
-Siemens T3000/SPPA-T3000
-ABB 800xA
-Yokogawa CENTUM
-Honeywell Experion
-Equipment status tracking
-Auto-refresh functionality
-Data export capabilities
-4. DCS Documentation System (dcs-documentation.html)
+### 2. **Outage & Major Maintenance Planner** (`outage-planner.html`)
+- **Gantt-style timeline** with drag-and-drop functionality
+- **Pre-loaded DCS outage jobs**:
+  - Logic modification windows
+  - HMI upgrades and configuration
+  - Controller firmware updates
+  - Network redundancy tests
+  - I/O module calibration
+  - Database backup and archiving
+- **Manpower allocation** tracking
+- **Risk assessment** matrix
+- **LOTO (Lockout/Tagout) tracker**
+- **Excel export** capabilities
 
-I/O Point Verification Matrix
-Control Logic Backup Records
-Controller Diagnostics:
-CPU usage monitoring
-Memory utilization
-Uptime tracking
-Error and warning counts
-Activity logging with timestamps
-Support for all major DCS platforms
-Backup and restore functionality
-5. Work Management System (work-management.html)
+### 3. **Operations Dashboard** (`operations-dashboard.html`)
+- **Real-time plant parameter monitoring**:
+  - Unit output (MW)
+  - Main steam pressure
+  - Boiler temperature
+  - Turbine speed
+  - Generator voltage
+  - Feedwater flow
+- **Alarm management system** with color-coded severity
+- **DCS system status** for major platforms:
+  - Emerson Ovation
+  - Siemens T3000/SPPA-T3000
+  - ABB 800xA
+  - Yokogawa CENTUM
+  - Honeywell Experion
+- **Equipment status tracking**
+- **Auto-refresh** functionality
+- **Data export** capabilities
 
-Permit to Work System:
-Electrical work permits
-Mechanical work permits
-Instrumentation permits
-Control system work permits
-Hot work permits
-Confined space permits
-Equipment Checkout System
-Maintenance Scheduling
-Digital signatures and approvals
-Priority and status tracking
-6. Equipment Management (equipment-management.html)
+### 4. **DCS Documentation System** (`dcs-documentation.html`)
+- **I/O Point Verification Matrix**
+- **Control Logic Backup Records**
+- **Controller Diagnostics**:
+  - CPU usage monitoring
+  - Memory utilization
+  - Uptime tracking
+  - Error and warning counts
+- **Activity logging** with timestamps
+- **Support for all major DCS platforms**
+- **Backup and restore** functionality
 
-Tools & Equipment Tracker
-Calibration Records:
-Automated due date tracking
-Certificate management
-Calibration history
-Maintenance History
-Inventory Management:
-Stock level monitoring
-Low stock alerts
-Supplier information
-Equipment valuation and depreciation
-7. Standards Compliance (standards-compliance.html)
+### 5. **Work Management System** (`work-management.html`)
+- **Permit to Work System**:
+  - Electrical work permits
+  - Mechanical work permits
+  - Instrumentation permits
+  - Control system work permits
+  - Hot work permits
+  - Confined space permits
+- **Equipment Checkout System**
+- **Maintenance Scheduling**
+- **Digital signatures** and approvals
+- **Priority and status tracking**
 
-Philippine Electrical Code (PEC) Checklist:
-Interactive compliance checking
-Progress tracking
-Reference to specific PEC rules
-DOE Reporting Templates:
-Monthly operational reports
-Generation statistics
-Availability factors
-Outage rates
-ISO Standards Compliance (ISO 9001, ISO 14001)
-IEEE Standards (IEEE 1547 interconnection)
-Audit Trail with complete activity logging
-Compliance reporting and export
-8. Daily Operations Log (daily-log.html)
+### 6. **Equipment Management** (`equipment-management.html`)
+- **Tools & Equipment Tracker**
+- **Calibration Records**:
+  - Automated due date tracking
+  - Certificate management
+  - Calibration history
+- **Maintenance History**
+- **Inventory Management**:
+  - Stock level monitoring
+  - Low stock alerts
+  - Supplier information
+- **Equipment valuation and depreciation**
 
-Shift Handover Forms:
-Digital signatures
-Equipment status summary
-Active alarms and issues
-Special instructions
-Plant Parameters Logging:
-Time-stamped readings
-Historical data tracking
-Trend analysis
-Incident Reporting:
-Severity classification (Minor, Major, Critical)
-Root cause analysis
-Action tracking
-Status management
-Activity Timeline:
-Chronological log of all activities
-Different activity types (info, maintenance, incidents)
-Searchable and filterable
-🛠️ Technical Specifications
+### 7. **Standards Compliance** (`standards-compliance.html`)
+- **Philippine Electrical Code (PEC) Checklist**:
+  - Interactive compliance checking
+  - Progress tracking
+  - Reference to specific PEC rules
+- **DOE Reporting Templates**:
+  - Monthly operational reports
+  - Generation statistics
+  - Availability factors
+  - Outage rates
+- **ISO Standards Compliance** (ISO 9001, ISO 14001)
+- **IEEE Standards** (IEEE 1547 interconnection)
+- **Audit Trail** with complete activity logging
+- **Compliance reporting** and export
 
-System Requirements
+### 8. **Daily Operations Log** (`daily-log.html`)
+- **Shift Handover Forms**:
+  - Digital signatures
+  - Equipment status summary
+  - Active alarms and issues
+  - Special instructions
+- **Plant Parameters Logging**:
+  - Time-stamped readings
+  - Historical data tracking
+  - Trend analysis
+- **Incident Reporting**:
+  - Severity classification (Minor, Major, Critical)
+  - Root cause analysis
+  - Action tracking
+  - Status management
+- **Activity Timeline**:
+  - Chronological log of all activities
+  - Different activity types (info, maintenance, incidents)
+  - Searchable and filterable
 
-Browser: Any modern web browser (Chrome, Firefox, Safari, Edge)
-JavaScript: Must be enabled
-Storage: ~50MB local storage per month of data
-Network: None required (fully offline)
-Data Storage
+## 🛠️ Technical Specifications
 
-LocalStorage: All data stored in browser's localStorage
-Export/Import: JSON format for data backup and transfer
-Data Retention: Configurable, recommended 12 months
-Backup: Manual export recommended monthly
-Supported DCS Systems
+### System Requirements
+- **Browser**: Any modern web browser (Chrome, Firefox, Safari, Edge)
+- **JavaScript**: Must be enabled
+- **Storage**: ~50MB local storage per month of data
+- **Network**: None required (fully offline)
 
-Emerson Ovation
-Siemens T3000/SPPA-T3000
-ABB 800xA
-Yokogawa CENTUM
-Honeywell Experion
-📱 Mobile Optimization
+### Data Storage
+- **LocalStorage**: All data stored in browser's localStorage
+- **Export/Import**: JSON format for data backup and transfer
+- **Data Retention**: Configurable, recommended 12 months
+- **Backup**: Manual export recommended monthly
 
-Responsive Design
+### Supported DCS Systems
+- **Emerson Ovation**
+- **Siemens T3000/SPPA-T3000**
+- **ABB 800xA**
+- **Yokogawa CENTUM**
+- **Honeywell Experion**
 
-Adaptive layouts for phones, tablets, and desktops
-Touch-friendly controls with minimum 44px touch targets
-Optimized typography for small screens
-Swipe-friendly navigation
-Offline Synchronization
+## 📱 Mobile Optimization
 
-Local data caching
-Background sync when network available
-Conflict resolution for simultaneous edits
-🔒 Security & Compliance
+### Responsive Design
+- **Adaptive layouts** for phones, tablets, and desktops
+- **Touch-friendly** controls with minimum 44px touch targets
+- **Optimized typography** for small screens
+- **Swipe-friendly** navigation
 
-Data Protection
+### Offline Synchronization
+- **Local data caching**
+- **Background sync** when network available
+- **Conflict resolution** for simultaneous edits
 
-Local-only storage (no cloud dependency)
-Data encryption in localStorage
-Access logging for audit trails
-Backup encryption for exports
-Philippine Regulations Compliance
+## 🔒 Security & Compliance
 
-Philippine Electrical Code (PEC) integration
-Department of Energy (DOE) reporting templates
-ER 1-94 compliance tracking
-Environmental compliance monitoring
-📊 Export & Reporting
+### Data Protection
+- **Local-only storage** (no cloud dependency)
+- **Data encryption** in localStorage
+- **Access logging** for audit trails
+- **Backup encryption** for exports
 
-Data Export Formats
+### Philippine Regulations Compliance
+- **Philippine Electrical Code (PEC)** integration
+- **Department of Energy (DOE)** reporting templates
+- **ER 1-94** compliance tracking
+- **Environmental compliance** monitoring
 
-JSON: Complete data export
-CSV: Tabular data for Excel
-PDF: Print-ready reports (via browser print)
-Print: Optimized layouts for physical documentation
-Standard Reports
+## 📊 Export & Reporting
 
-Daily Operations Report
-Shift Handover Summary
-Monthly DOE Report
-Compliance Status Report
-Equipment Maintenance Report
-Incident Summary Report
-🚀 Getting Started
+### Data Export Formats
+- **JSON**: Complete data export
+- **CSV**: Tabular data for Excel
+- **PDF**: Print-ready reports (via browser print)
+- **Print**: Optimized layouts for physical documentation
 
-Installation
+### Standard Reports
+- **Daily Operations Report**
+- **Shift Handover Summary**
+- **Monthly DOE Report**
+- **Compliance Status Report**
+- **Equipment Maintenance Report**
+- **Incident Summary Report**
 
-1.Download all HTML files to a local folder
-2.Open index.html in a web browser
-3.Start using immediately (no installation required)
-First Use
+## 🚀 Getting Started
 
-1.Set up the current date and shift information
-2.Configure plant-specific settings
-3.Import existing data (if available)
-4.Begin logging daily operations
-Data Backup
+### Installation
+1. **Download** all HTML files to a local folder
+2. **Open** `index.html` in a web browser
+3. **Start using** immediately (no installation required)
 
-1.Navigate to any tool
-2.Click the "Export" button
-3.Save the JSON file to secure storage
-4.Repeat monthly for data protection
-🎯 Daily Workflow Example
+### First Use
+1. **Set up** the current date and shift information
+2. **Configure** plant-specific settings
+3. **Import** existing data (if available)
+4. **Begin logging** daily operations
 
-Morning Shift Start (06:00)
+### Data Backup
+1. **Navigate** to any tool
+2. **Click** the "Export" button
+3. **Save** the JSON file to secure storage
+4. **Repeat** monthly for data protection
 
-1.Open Daily Operations Log
-2.Load previous shift's handover
-3.Review active alarms and issues
-4.Update equipment status
-During Shift
+## 🎯 Daily Workflow Example
 
-1.Log plant parameters every 2 hours
-2.Record any incidents or unusual events
-3.Update work permits and equipment checkouts
-4.Monitor DCS system health
-Shift End (18:00)
+### Morning Shift Start (06:00)
+1. **Open** Daily Operations Log
+2. **Load** previous shift's handover
+3. **Review** active alarms and issues
+4. **Update** equipment status
 
-1.Complete shift handover form
-2.Summarize the day's activities
-3.Export daily log data
-4.Plan next day's activities
-🔧 Customization
+### During Shift
+1. **Log** plant parameters every 2 hours
+2. **Record** any incidents or unusual events
+3. **Update** work permits and equipment checkouts
+4. **Monitor** DCS system health
 
-Plant-Specific Configuration
+### Shift End (18:00)
+1. **Complete** shift handover form
+2. **Summarize** the day's activities
+3. **Export** daily log data
+4. **Plan** next day's activities
 
-Equipment names and locations
-DCS system types and versions
-Local procedures and checklists
-Company-specific templates
-Adding New Tools
+## 🔧 Customization
 
-Modular design allows easy addition
-Template system for consistent UI
-Shared components for consistency
-📞 Support & Maintenance
+### Plant-Specific Configuration
+- **Equipment names** and locations
+- **DCS system types** and versions
+- **Local procedures** and checklists
+- **Company-specific** templates
 
-Regular Maintenance
+### Adding New Tools
+- **Modular design** allows easy addition
+- **Template system** for consistent UI
+- **Shared components** for consistency
 
-Monthly: Export all data
-Quarterly: Review and clean old records
-Annually: Update templates and procedures
-Troubleshooting
+## 📞 Support & Maintenance
 
-Clear browser cache if issues occur
-Check localStorage for data corruption
-Re-export/import data for recovery
-Browser console for error diagnostics
-🏗️ Technical Architecture
+### Regular Maintenance
+- **Monthly**: Export all data
+- **Quarterly**: Review and clean old records
+- **Annually**: Update templates and procedures
+
+### Troubleshooting
+- **Clear browser cache** if issues occur
+- **Check localStorage** for data corruption
+- **Re-export/import** data for recovery
+- **Browser console** for error diagnostics
+
+## 🏗️ Technical Architecture
+
+### Frontend Technology
+- **HTML5**: Semantic markup
+- **CSS3**: Modern styling with custom properties
+- **Vanilla JavaScript**: No external dependencies
+- **LocalStorage API**: Client-side data persistence
+
+### Code Organization
+- **Modular structure** for easy maintenance
+- **Consistent design system** across all tools
+- **Reusable components** for common UI elements
+- **Event-driven architecture** for responsiveness
+
+## 📈 Future Enhancements
+
+### Planned Features
+- **Data analytics** and trending
+- **Predictive maintenance** alerts
+- **Integration APIs** for external systems
+- **Multi-language support**
+- **Advanced reporting** with charts and graphs
+
+### User Feedback Integration
+- **Suggestion system** for new features
+- **Usage analytics** for optimization
+- **User experience** improvements
+
+## 📄 License & Copyright
+
+This toolkit is designed for professional use in Philippine power plants. All tools are provided as-is for operational support and compliance management.
+
+**Note**: Always verify compliance with local regulations and company procedures. This toolkit is a support tool and should not replace proper engineering judgment and formal procedures.
+
+---
+
+## 📁 File Structure
+
+```
+dcs-tools/
+├── index.html                    # Main dashboard
+├── outage-planner.html           # Outage planning
+├── operations-dashboard.html     # Real-time monitoring
+├── dcs-documentation.html        # Documentation system
+├── work-management.html          # Permits and scheduling
+├── equipment-management.html     # Equipment tracking
+├── standards-compliance.html     # Compliance and reporting
+├── daily-log.html               # Operations logging
+└── README.md                    # This file
+```
+
+## 🎯 Quick Start Checklist
+
+- [ ] Download all HTML files
+- [ ] Open index.html in browser
+- [ ] Set current date and shift
+- [ ] Configure plant settings
+- [ ] Begin daily operations
+- [ ] Export backup data
+- [ ] Schedule regular exports
+
+**Professional DCS Engineering Toolkit - Designed for Philippine Power Plants**

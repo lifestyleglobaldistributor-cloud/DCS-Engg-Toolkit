@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DCS Documentation - DCS Engineer Toolkit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Fira+Code:wght@400&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        :root {
+            --neutral-900: #0A1929;
+            --neutral-800: #112240;
+            --neutral-700: #1A2D4D;
+            --neutral-500: #8892B0;
+            --neutral-300: #CCD6F6;
+            --neutral-100: #E6F1FF;
+            --primary-500: #00A8FF;
+            --primary-700: #007BBE;
+            --success: #2ECC71;
+            --info: #3498DB;
+            --warning: #F1C40F;
+            --error: #E74C3C;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--neutral-900);
+            color: var(--neutral-300);
+            line-height: 1.5;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 240px;
+            background-color: var(--neutral-800);
+            padding: 24px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 24px;
+            flex: 1;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 0 24px;
+        }
+
+        .logo h1 {
+            color: var(--neutral-100);
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .logo p {
+            color: var(--neutral-500);
+            font-size: 10px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 24px;
+            color: var(--neutral-300);
+            text-decoration: none;
+            transition: background-color 200ms ease-out;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background-color: #1A2D4D;
+        }
+
+        .nav-item.active {
+            background-color: rgba(0, 168, 255, 0.1);
+            border-left: 2px solid var(--primary-500);
+        }
+
+        .nav-item i {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            color: var(--neutral-100);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            background-color: var(--neutral-800);
+            padding: 12px 16px;
+            border-radius: 6px;
+            border: 1px solid var(--neutral-500);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-size: 12px;
+            color: var(--neutral-500);
+            white-space: nowrap;
+        }
+
+        select, input {
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            color: var(--neutral-300);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            min-width: 120px;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgba(0, 168, 255, 0.4);
+        }
+
+        .btn {
+            background-color: var(--primary-500);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 200ms ease-out;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-700);
+        }
+
+        .btn.secondary {
+            background-color: var(--neutral-700);
+            border: 1px solid var(--neutral-500);
+        }
+
+        .btn.secondary:hover {
+            background-color: var(--neutral-600);
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding-left: 40px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238892B0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/path%3E%3Cpath d='m21 21-4.35-4.35'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 12px center;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--neutral-500);
+            margin-bottom: 24px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            color: var(--neutral-500);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 200ms ease-out;
+        }
+
+        .tab.active {
+            color: var(--primary-500);
+            border-bottom-color: var(--primary-500);
+        }
+
+        .tab:hover {
+            color: var(--neutral-300);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background-color: var(--neutral-800);
+            border-radius: 8px;
+            border: 1px solid var(--neutral-500);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--neutral-500);
+            background-color: var(--neutral-700);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h3 {
+            color: var(--neutral-100);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .card-content {
+            padding: 24px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background-color: var(--neutral-700);
+            color: var(--neutral-100);
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--neutral-500);
+        }
+
+        .table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--neutral-700);
+            font-size: 14px;
+        }
+
+        .table tr:hover {
+            background-color: var(--neutral-750);
+        }
+
+        .code {
+            font-family: 'Fira Code', monospace;
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 12px;
+            color: var(--neutral-100);
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .status-verified { background-color: var(--success); color: white; }
+        .status-pending { background-color: var(--warning); color: black; }
+        .status-failed { background-color: var(--error); color: white; }
+        .status-current { background-color: var(--info); color: white; }
+        .status-obsolete { background-color: var(--neutral-500); color: white; }
+
+        .backup-item {
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: border-color 200ms ease-out;
+        }
+
+        .backup-item:hover {
+            border-color: var(--primary-500);
+        }
+
+        .backup-info h4 {
+            color: var(--neutral-100);
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .backup-info p {
+            color: var(--neutral-500);
+            font-size: 12px;
+        }
+
+        .backup-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--neutral-500);
+        }
+
+        .log-entry {
+            background-color: var(--neutral-900);
+            border-left: 3px solid var(--neutral-500);
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .log-entry.error { border-left-color: var(--error); }
+        .log-entry.warning { border-left-color: var(--warning); }
+        .log-entry.info { border-left-color: var(--info); }
+        .log-entry.success { border-left-color: var(--success); }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .log-title {
+            color: var(--neutral-100);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .log-time {
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            color: var(--neutral-500);
+        }
+
+        .log-description {
+            color: var(--neutral-300);
+            font-size: 13px;
+        }
+
+        .diagnostic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .diagnostic-item {
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            border-radius: 6px;
+            padding: 16px;
+        }
+
+        .diagnostic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .diagnostic-name {
+            color: var(--neutral-100);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .diagnostic-status {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .diagnostic-status.online { background-color: var(--success); }
+        .diagnostic-status.offline { background-color: var(--error); }
+        .diagnostic-status.degraded { background-color: var(--warning); }
+
+        .diagnostic-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: var(--neutral-500);
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-family: 'Fira Code', monospace;
+            font-size: 16px;
+            color: var(--neutral-100);
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .filter-btn {
+            background-color: var(--neutral-700);
+            color: var(--neutral-300);
+            border: 1px solid var(--neutral-500);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 200ms ease-out;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background-color: var(--primary-500);
+            color: white;
+            border-color: var(--primary-500);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 64px;
+            }
+
+            .main-content {
+                margin-left: 64px;
+                padding: 16px;
+            }
+
+            .nav-item span {
+                display: none;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .tabs {
+                overflow-x: auto;
+            }
+
+            .table {
+                font-size: 12px;
+            }
+
+            .diagnostic-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <div class="logo">
+                <h1>DCS Tools</h1>
+                <p>Philippine Power Plants</p>
+            </div>
+            
+            <a href="index.html" class="nav-item">
+                <i data-lucide="home"></i>
+                <span>Dashboard</span>
+            </a>
+            
+            <a href="outage-planner.html" class="nav-item">
+                <i data-lucide="calendar"></i>
+                <span>Outage Planner</span>
+            </a>
+            
+            <a href="operations-dashboard.html" class="nav-item">
+                <i data-lucide="activity"></i>
+                <span>Operations</span>
+            </a>
+            
+            <a href="dcs-documentation.html" class="nav-item active">
+                <i data-lucide="folder"></i>
+                <span>DCS Documentation</span>
+            </a>
+            
+            <a href="work-management.html" class="nav-item">
+                <i data-lucide="clipboard"></i>
+                <span>Work Management</span>
+            </a>
+            
+            <a href="equipment-management.html" class="nav-item">
+                <i data-lucide="wrench"></i>
+                <span>Equipment</span>
+            </a>
+            
+            <a href="standards-compliance.html" class="nav-item">
+                <i data-lucide="shield"></i>
+                <span>Standards</span>
+            </a>
+            
+            <a href="daily-log.html" class="nav-item">
+                <i data-lucide="book"></i>
+                <span>Daily Log</span>
+            </a>
+        </nav>
+        
+        <main class="main-content">
+            <div class="header">
+                <div>
+                    <h1>DCS Documentation System</h1>
+                    <p>Logic backup, I/O verification, controller diagnostics</p>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label>DCS System:</label>
+                    <select id="dcsSystem">
+                        <option value="ovation">Emerson Ovation</option>
+                        <option value="t3000">Siemens T3000/SPPA-T3000</option>
+                        <option value="800xa">ABB 800xA</option>
+                        <option value="centum">Yokogawa CENTUM</option>
+                        <option value="experion">Honeywell Experion</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label>Area:</label>
+                    <select id="area">
+                        <option value="boiler">Boiler</option>
+                        <option value="turbine">Turbine</option>
+                        <option value="generator">Generator</option>
+                        <option value="auxiliary">Auxiliary Systems</option>
+                        <option value="electrical">Electrical</option>
+                    </select>
+                </div>
+                
+                <button class="btn" onclick="addRecord()">
+                    <i data-lucide="plus"></i>
+                    Add Record
+                </button>
+                
+                <button class="btn secondary" onclick="exportDocumentation()">
+                    <i data-lucide="download"></i>
+                    Export
+                </button>
+            </div>
+            
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('io-verification')">I/O Verification</button>
+                <button class="tab" onclick="switchTab('logic-backup')">Logic Backup</button>
+                <button class="tab" onclick="switchTab('controller-diagnostics')">Controller Diagnostics</button>
+                <button class="tab" onclick="switchTab('documentation-log')">Documentation Log</button>
+            </div>
+            
+            <div id="io-verification" class="tab-content active">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>I/O Point Verification Matrix</h3>
+                        <div class="filter-controls">
+                            <button class="filter-btn active" onclick="filterIO('all')">All</button>
+                            <button class="filter-btn" onclick="filterIO('verified')">Verified</button>
+                            <button class="filter-btn" onclick="filterIO('pending')">Pending</button>
+                            <button class="filter-btn" onclick="filterIO('failed')">Failed</button>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Point ID</th>
+                                    <th>Description</th>
+                                    <th>Type</th>
+                                    <th>Signal Range</th>
+                                    <th>Controller</th>
+                                    <th>I/O Module</th>
+                                    <th>Channel</th>
+                                    <th>Status</th>
+                                    <th>Last Verified</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ioTable">
+                                <!-- I/O data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="logic-backup" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Control Logic Backup Records</h3>
+                    </div>
+                    <div class="card-content" id="backupList">
+                        <!-- Backup records will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            
+            <div id="controller-diagnostics" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Controller Diagnostic Information</h3>
+                        <button class="btn" onclick="runDiagnostics()">
+                            <i data-lucide="play"></i>
+                            Run Diagnostics
+                        </button>
+                    </div>
+                    <div class="card-content">
+                        <div class="diagnostic-grid" id="diagnosticGrid">
+                            <!-- Diagnostic information will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="documentation-log" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Documentation Activity Log</h3>
+                    </div>
+                    <div class="card-content" id="activityLog">
+                        <!-- Activity log will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // I/O Verification data
+        let ioPoints = [
+            { id: 'FI-301', description: 'Main Steam Flow Indicator', type: 'AI', range: '4-20mA', controller: 'CONT-3A', module: 'AI-001', channel: '03', status: 'verified', lastVerified: '2025-01-18 09:30' },
+            { id: 'PIC-401', description: 'Main Steam Pressure Controller', type: 'AI/AO', range: '0-200 bar', controller: 'CONT-3B', module: 'AI/AO-002', channel: '05', status: 'pending', lastVerified: '2025-01-17 14:15' },
+            { id: 'TIC-501', description: 'Boiler Temperature Controller', type: 'AI/AO', range: '0-600°C', controller: 'CONT-4A', module: 'AI/AO-003', channel: '07', status: 'verified', lastVerified: '2025-01-18 11:45' },
+            { id: 'FIC-601', description: 'Feedwater Flow Controller', type: 'AI/AO', range: '0-1500 t/h', controller: 'CONT-4B', module: 'AI/AO-004', channel: '09', status: 'failed', lastVerified: '2025-01-16 16:20' },
+            { id: 'LIC-701', description: 'Feedwater Level Controller', type: 'AI/AO', range: '0-100%', controller: 'CONT-5A', module: 'AI/AO-005', channel: '11', status: 'verified', lastVerified: '2025-01-18 10:15' },
+            { id: 'VIBR-801', description: 'Turbine Vibration Monitor', type: 'AI', range: '0-100 μm', controller: 'CONT-6A', module: 'AI-006', channel: '13', status: 'pending', lastVerified: '2025-01-17 13:30' }
+        ];
+        
+        // Logic Backup data
+        let backupRecords = [
+            {
+                id: 'BKP-001',
+                name: 'Boiler Protection Logic',
+                system: 'ovation',
+                version: 'v2.3.1',
+                date: '2025-01-15',
+                size: '15.2 MB',
+                checksum: 'a7f3c9e2b1d8f6',
+                status: 'current',
+                description: 'Complete boiler protection and safety logic backup'
+            },
+            {
+                id: 'BKP-002',
+                name: 'Turbine Control System',
+                system: 'ovation',
+                version: 'v1.8.5',
+                date: '2025-01-10',
+                size: '8.7 MB',
+                checksum: 'b2e4f6a8c1d9e3',
+                status: 'current',
+                description: 'Turbine governor and protection logic'
+            },
+            {
+                id: 'BKP-003',
+                name: 'Generator Protection',
+                system: 't3000',
+                version: 'v3.1.2',
+                date: '2025-01-08',
+                size: '12.1 MB',
+                checksum: 'c5a7b9d1e3f6a8',
+                status: 'obsolete',
+                description: 'Generator protection and synchronization logic'
+            }
+        ];
+        
+        // Controller Diagnostics data
+        let controllerDiagnostics = [
+            {
+                id: 'CONT-3A',
+                name: 'Boiler Controller 3A',
+                status: 'online',
+                cpu: 45,
+                memory: 62,
+                uptime: '45d 12h',
+                lastRestart: '2024-11-15 08:30',
+                errors: 0,
+                warnings: 2
+            },
+            {
+                id: 'CONT-3B',
+                name: 'Boiler Controller 3B',
+                status: 'online',
+                cpu: 38,
+                memory: 58,
+                uptime: '23d 8h',
+                lastRestart: '2024-12-01 14:15',
+                errors: 1,
+                warnings: 0
+            },
+            {
+                id: 'CONT-4A',
+                name: 'Turbine Controller 4A',
+                status: 'degraded',
+                cpu: 78,
+                memory: 85,
+                uptime: '67d 15h',
+                lastRestart: '2024-10-20 09:45',
+                errors: 3,
+                warnings: 5
+            },
+            {
+                id: 'CONT-5A',
+                name: 'Generator Controller 5A',
+                status: 'online',
+                cpu: 41,
+                memory: 65,
+                uptime: '34d 21h',
+                lastRestart: '2024-11-28 16:20',
+                errors: 0,
+                warnings: 1
+            }
+        ];
+        
+        // Activity Log data
+        let activityLog = [
+            {
+                time: '2025-01-18 14:30:15',
+                title: 'I/O Point FI-301 Verified',
+                description: 'Main steam flow indicator verification completed successfully',
+                type: 'success'
+            },
+            {
+                time: '2025-01-18 13:45:22',
+                title: 'Logic Backup BKP-001 Created',
+                description: 'Boiler protection logic backup created with checksum verification',
+                type: 'info'
+            },
+            {
+                time: '2025-01-18 11:15:08',
+                title: 'Controller Warning - CONT-4A',
+                description: 'High CPU usage detected on Turbine Controller 4A (78%)',
+                type: 'warning'
+            },
+            {
+                time: '2025-01-18 09:20:33',
+                title: 'I/O Point FIC-601 Failed Verification',
+                description: 'Feedwater flow controller I/O verification failed - signal out of range',
+                type: 'error'
+            },
+            {
+                time: '2025-01-17 16:30:45',
+                title: 'Controller Restart - CONT-3B',
+                description: 'Boiler Controller 3B restarted after memory optimization',
+                type: 'info'
+            }
+        ];
+        
+        // Render I/O verification table
+        function renderIOTable(filter = 'all') {
+            const table = document.getElementById('ioTable');
+            table.innerHTML = '';
+            
+            const filteredPoints = ioPoints.filter(point => filter === 'all' || point.status === filter);
+            
+            filteredPoints.forEach(point => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><span class="code">${point.id}</span></td>
+                    <td>${point.description}</td>
+                    <td>${point.type}</td>
+                    <td>${point.range}</td>
+                    <td><span class="code">${point.controller}</span></td>
+                    <td><span class="code">${point.module}</span></td>
+                    <td><span class="code">${point.channel}</span></td>
+                    <td><span class="status-badge status-${point.status}">${point.status}</span></td>
+                    <td>${point.lastVerified}</td>
+                `;
+                table.appendChild(row);
+            });
+        }
+        
+        // Render backup records
+        function renderBackupRecords() {
+            const backupList = document.getElementById('backupList');
+            backupList.innerHTML = '';
+            
+            backupRecords.forEach(record => {
+                const backupItem = document.createElement('div');
+                backupItem.className = 'backup-item';
+                backupItem.innerHTML = `
+                    <div class="backup-info">
+                        <h4>${record.name}</h4>
+                        <p>${record.description}</p>
+                    </div>
+                    <div class="backup-meta">
+                        <div>
+                            <div>Version: ${record.version}</div>
+                            <div>Size: ${record.size}</div>
+                        </div>
+                        <div>
+                            <div>Date: ${record.date}</div>
+                            <div><span class="status-badge status-${record.status}">${record.status}</span></div>
+                        </div>
+                        <div>
+                            <button class="btn secondary" onclick="downloadBackup('${record.id}')">
+                                <i data-lucide="download"></i>
+                                Download
+                            </button>
+                        </div>
+                    </div>
+                `;
+                backupList.appendChild(backupItem);
+            });
+            
+            lucide.createIcons();
+        }
+        
+        // Render controller diagnostics
+        function renderControllerDiagnostics() {
+            const diagnosticGrid = document.getElementById('diagnosticGrid');
+            diagnosticGrid.innerHTML = '';
+            
+            controllerDiagnostics.forEach(controller => {
+                const diagnosticItem = document.createElement('div');
+                diagnosticItem.className = 'diagnostic-item';
+                diagnosticItem.innerHTML = `
+                    <div class="diagnostic-header">
+                        <span class="diagnostic-name">${controller.name}</span>
+                        <div class="diagnostic-status ${controller.status}"></div>
+                    </div>
+                    <div class="diagnostic-metrics">
+                        <div class="metric">
+                            <div class="metric-label">CPU Usage</div>
+                            <div class="metric-value">${controller.cpu}%</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Memory</div>
+                            <div class="metric-value">${controller.memory}%</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Uptime</div>
+                            <div class="metric-value" style="font-size: 12px;">${controller.uptime}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Errors</div>
+                            <div class="metric-value">${controller.errors}</div>
+                        </div>
+                    </div>
+                `;
+                diagnosticGrid.appendChild(diagnosticItem);
+            });
+        }
+        
+        // Render activity log
+        function renderActivityLog() {
+            const activityLogDiv = document.getElementById('activityLog');
+            activityLogDiv.innerHTML = '';
+            
+            activityLog.forEach(entry => {
+                const logEntry = document.createElement('div');
+                logEntry.className = `log-entry ${entry.type}`;
+                logEntry.innerHTML = `
+                    <div class="log-header">
+                        <span class="log-title">${entry.title}</span>
+                        <span class="log-time">${entry.time}</span>
+                    </div>
+                    <div class="log-description">${entry.description}</div>
+                `;
+                activityLogDiv.appendChild(logEntry);
+            });
+        }
+        
+        // Switch tabs
+        function switchTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabId).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+        
+        // Filter I/O points
+        function filterIO(filter) {
+            // Update filter button states
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Render filtered data
+            renderIOTable(filter);
+        }
+        
+        // Add new record
+        function addRecord() {
+            const system = document.getElementById('dcsSystem').value;
+            const area = document.getElementById('area').value;
+            
+            const newRecord = {
+                id: `FI-${Math.floor(Math.random() * 999) + 100}`,
+                description: `New ${area} point`,
+                type: 'AI',
+                range: '4-20mA',
+                controller: 'CONT-NEW',
+                module: 'AI-999',
+                channel: '99',
+                status: 'pending',
+                lastVerified: new Date().toISOString().split('T')[0] + ' ' + new Date().toTimeString().split(' ')[0]
+            };
+            
+            ioPoints.push(newRecord);
+            renderIOTable();
+            addActivityLog('New I/O Point Added', `${newRecord.id} added to ${system} system`, 'info');
+            saveData();
+        }
+        
+        // Download backup
+        function downloadBackup(backupId) {
+            const backup = backupRecords.find(b => b.id === backupId);
+            if (backup) {
+                addActivityLog('Backup Download', `Downloading backup ${backup.name}`, 'info');
+                // Simulate download
+                const link = document.createElement('a');
+                link.href = `data:text/plain;charset=utf-8,Backup ID: ${backup.id}\nName: ${backup.name}\nVersion: ${backup.version}\nChecksum: ${backup.checksum}`;
+                link.download = `${backup.id}-${backup.version}.txt`;
+                link.click();
+            }
+        }
+        
+        // Run diagnostics
+        function runDiagnostics() {
+            addActivityLog('Diagnostics Started', 'Controller diagnostics initiated', 'info');
+            
+            // Simulate diagnostic update
+            controllerDiagnostics.forEach(controller => {
+                controller.cpu = Math.floor(Math.random() * 80) + 10;
+                controller.memory = Math.floor(Math.random() * 70) + 20;
+                controller.errors = Math.floor(Math.random() * 5);
+                controller.warnings = Math.floor(Math.random() * 8);
+            });
+            
+            renderControllerDiagnostics();
+            setTimeout(() => {
+                addActivityLog('Diagnostics Completed', 'All controller diagnostics completed successfully', 'success');
+            }, 2000);
+        }
+        
+        // Add activity log entry
+        function addActivityLog(title, description, type) {
+            const newEntry = {
+                time: new Date().toISOString().replace('T', ' ').split('.')[0],
+                title: title,
+                description: description,
+                type: type
+            };
+            
+            activityLog.unshift(newEntry);
+            if (activityLog.length > 50) {
+                activityLog = activityLog.slice(0, 50);
+            }
+            
+            renderActivityLog();
+        }
+        
+        // Export documentation
+        function exportDocumentation() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                system: document.getElementById('dcsSystem').value,
+                area: document.getElementById('area').value,
+                ioPoints: ioPoints,
+                backupRecords: backupRecords,
+                controllerDiagnostics: controllerDiagnostics,
+                activityLog: activityLog
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dcs-documentation-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        // Save data to localStorage
+        function saveData() {
+            const dcsData = {
+                ioPoints: ioPoints,
+                backupRecords: backupRecords,
+                controllerDiagnostics: controllerDiagnostics,
+                activityLog: activityLog,
+                lastUpdated: new Date().toISOString()
+            };
+            localStorage.setItem('dcs-documentation-data', JSON.stringify(dcsData));
+        }
+        
+        // Load data from localStorage
+        function loadData() {
+            const saved = localStorage.getItem('dcs-documentation-data');
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data.ioPoints) ioPoints = data.ioPoints;
+                if (data.backupRecords) backupRecords = data.backupRecords;
+                if (data.controllerDiagnostics) controllerDiagnostics = data.controllerDiagnostics;
+                if (data.activityLog) activityLog = data.activityLog;
+            }
+        }
+        
+        // Initialize
+        loadData();
+        renderIOTable();
+        renderBackupRecords();
+        renderControllerDiagnostics();
+        renderActivityLog();
+        
+        // Auto-save every 30 seconds
+        setInterval(saveData, 30000);
+    </script>
+</body>
+</html>

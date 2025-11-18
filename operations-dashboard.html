@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operations Dashboard - DCS Engineer Toolkit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Fira+Code:wght@400&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        :root {
+            --neutral-900: #0A1929;
+            --neutral-800: #112240;
+            --neutral-700: #1A2D4D;
+            --neutral-500: #8892B0;
+            --neutral-300: #CCD6F6;
+            --neutral-100: #E6F1FF;
+            --primary-500: #00A8FF;
+            --primary-700: #007BBE;
+            --success: #2ECC71;
+            --info: #3498DB;
+            --warning: #F1C40F;
+            --error: #E74C3C;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--neutral-900);
+            color: var(--neutral-300);
+            line-height: 1.5;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 240px;
+            background-color: var(--neutral-800);
+            padding: 24px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 24px;
+            flex: 1;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 0 24px;
+        }
+
+        .logo h1 {
+            color: var(--neutral-100);
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .logo p {
+            color: var(--neutral-500);
+            font-size: 10px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 24px;
+            color: var(--neutral-300);
+            text-decoration: none;
+            transition: background-color 200ms ease-out;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background-color: #1A2D4D;
+        }
+
+        .nav-item.active {
+            background-color: rgba(0, 168, 255, 0.1);
+            border-left: 2px solid var(--primary-500);
+        }
+
+        .nav-item i {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 24px;
+            gap: 24px;
+        }
+
+        .header h1 {
+            color: var(--neutral-100);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background-color: var(--neutral-800);
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: 1px solid var(--neutral-500);
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .status-dot.online { background-color: var(--success); }
+        .status-dot.alarm { background-color: var(--error); }
+        .status-dot.warning { background-color: var(--warning); }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background-color: var(--neutral-800);
+            border-radius: 8px;
+            border: 1px solid var(--neutral-500);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--neutral-500);
+            background-color: var(--neutral-700);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h3 {
+            color: var(--neutral-100);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .card-content {
+            padding: 24px;
+        }
+
+        .parameter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .parameter {
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            border-radius: 6px;
+            padding: 16px;
+        }
+
+        .parameter-label {
+            font-size: 12px;
+            color: var(--neutral-500);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .parameter-value {
+            font-family: 'Fira Code', monospace;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--neutral-100);
+        }
+
+        .parameter-unit {
+            font-size: 14px;
+            color: var(--neutral-500);
+            margin-left: 8px;
+        }
+
+        .parameter-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .status-indicator-small {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-normal { background-color: var(--success); }
+        .status-warning { background-color: var(--warning); }
+        .status-critical { background-color: var(--error); }
+
+        .alarms-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .alarm-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--neutral-700);
+            transition: background-color 200ms ease-out;
+        }
+
+        .alarm-item:hover {
+            background-color: var(--neutral-700);
+        }
+
+        .alarm-item:last-child {
+            border-bottom: none;
+        }
+
+        .alarm-info {
+            flex: 1;
+        }
+
+        .alarm-title {
+            color: var(--neutral-100);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .alarm-description {
+            color: var(--neutral-500);
+            font-size: 12px;
+        }
+
+        .alarm-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alarm-severity {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .severity-critical {
+            background-color: var(--error);
+            color: white;
+        }
+
+        .severity-warning {
+            background-color: var(--warning);
+            color: black;
+        }
+
+        .severity-info {
+            background-color: var(--info);
+            color: white;
+        }
+
+        .alarm-time {
+            font-family: 'Fira Code', monospace;
+            font-size: 11px;
+            color: var(--neutral-500);
+        }
+
+        .equipment-status {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+        }
+
+        .equipment-item {
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            border-radius: 6px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .equipment-name {
+            font-size: 12px;
+            color: var(--neutral-500);
+            margin-bottom: 8px;
+        }
+
+        .equipment-icon {
+            margin-bottom: 8px;
+            color: var(--neutral-300);
+        }
+
+        .equipment-value {
+            font-family: 'Fira Code', monospace;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--neutral-100);
+        }
+
+        .trend-indicator {
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        .trend-up { color: var(--error); }
+        .trend-down { color: var(--success); }
+        .trend-stable { color: var(--neutral-500); }
+
+        .system-overview {
+            grid-column: 1 / -1;
+        }
+
+        .systems-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .system-card {
+            background-color: var(--neutral-900);
+            border: 1px solid var(--neutral-500);
+            border-radius: 6px;
+            padding: 16px;
+        }
+
+        .system-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .system-name {
+            color: var(--neutral-100);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .system-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        .system-online { background-color: var(--success); color: white; }
+        .system-offline { background-color: var(--error); color: white; }
+        .system-maintenance { background-color: var(--warning); color: black; }
+
+        .system-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 10px;
+            color: var(--neutral-500);
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            color: var(--neutral-100);
+        }
+
+        .refresh-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn {
+            background-color: var(--primary-500);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 200ms ease-out;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-700);
+        }
+
+        .btn.secondary {
+            background-color: var(--neutral-700);
+            border: 1px solid var(--neutral-500);
+        }
+
+        .btn.secondary:hover {
+            background-color: var(--neutral-600);
+        }
+
+        .controls {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .auto-refresh {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .switch {
+            position: relative;
+            width: 40px;
+            height: 20px;
+            background-color: var(--neutral-600);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 200ms ease-out;
+        }
+
+        .switch.active {
+            background-color: var(--primary-500);
+        }
+
+        .switch-handle {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background-color: white;
+            border-radius: 50%;
+            transition: left 200ms ease-out;
+        }
+
+        .switch.active .switch-handle {
+            left: 22px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 64px;
+            }
+
+            .main-content {
+                margin-left: 64px;
+                padding: 16px;
+            }
+
+            .nav-item span {
+                display: none;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .parameter-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .status-dot {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <div class="logo">
+                <h1>DCS Tools</h1>
+                <p>Philippine Power Plants</p>
+            </div>
+            
+            <a href="index.html" class="nav-item">
+                <i data-lucide="home"></i>
+                <span>Dashboard</span>
+            </a>
+            
+            <a href="outage-planner.html" class="nav-item">
+                <i data-lucide="calendar"></i>
+                <span>Outage Planner</span>
+            </a>
+            
+            <a href="operations-dashboard.html" class="nav-item active">
+                <i data-lucide="activity"></i>
+                <span>Operations</span>
+            </a>
+            
+            <a href="dcs-documentation.html" class="nav-item">
+                <i data-lucide="folder"></i>
+                <span>DCS Documentation</span>
+            </a>
+            
+            <a href="work-management.html" class="nav-item">
+                <i data-lucide="clipboard"></i>
+                <span>Work Management</span>
+            </a>
+            
+            <a href="equipment-management.html" class="nav-item">
+                <i data-lucide="wrench"></i>
+                <span>Equipment</span>
+            </a>
+            
+            <a href="standards-compliance.html" class="nav-item">
+                <i data-lucide="shield"></i>
+                <span>Standards</span>
+            </a>
+            
+            <a href="daily-log.html" class="nav-item">
+                <i data-lucide="book"></i>
+                <span>Daily Log</span>
+            </a>
+        </nav>
+        
+        <main class="main-content">
+            <div class="header">
+                <div>
+                    <h1>Plant Operations Dashboard</h1>
+                    <p>Real-time monitoring and alarm management</p>
+                </div>
+                <div class="status-indicator">
+                    <div class="status-dot online" id="connectionStatus"></div>
+                    <span>Online</span>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <div class="auto-refresh">
+                    <span>Auto Refresh</span>
+                    <div class="switch active" id="autoRefreshSwitch">
+                        <div class="switch-handle"></div>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="acknowledgeAllAlarms()">
+                    <i data-lucide="check"></i>
+                    Acknowledge All
+                </button>
+                
+                <button class="btn secondary" onclick="refreshData()">
+                    <i data-lucide="refresh"></i>
+                    Refresh Now
+                </button>
+                
+                <button class="btn secondary" onclick="exportData()">
+                    <i data-lucide="download"></i>
+                    Export Data
+                </button>
+            </div>
+            
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Critical Plant Parameters</h3>
+                        <span style="font-size: 12px; color: var(--neutral-500);">Updated: <span id="lastUpdate">--:--:--</span></span>
+                    </div>
+                    <div class="card-content">
+                        <div class="parameter-grid">
+                            <div class="parameter">
+                                <div class="parameter-label">Unit 1 MW Output</div>
+                                <div class="parameter-value">
+                                    <span id="unit1Output">350.5</span>
+                                    <span class="parameter-unit">MW</span>
+                                </div>
+                                <div class="parameter-status">
+                                    <div class="status-indicator-small status-normal"></div>
+                                    <span style="font-size: 12px; color: var(--success);">Normal</span>
+                                </div>
+                            </div>
+                            
+                            <div class="parameter">
+                                <div class="parameter-label">Main Steam Pressure</div>
+                                <div class="parameter-value">
+                                    <span id="mainSteamPressure">165.2</span>
+                                    <span class="parameter-unit">bar</span>
+                                </div>
+                                <div class="parameter-status">
+                                    <div class="status-indicator-small status-warning"></div>
+                                    <span style="font-size: 12px; color: var(--warning);">Warning</span>
+                                </div>
+                            </div>
+                            
+                            <div class="parameter">
+                                <div class="parameter-label">Boiler Temperature</div>
+                                <div class="parameter-value">
+                                    <span id="boilerTemp">540.1</span>
+                                    <span class="parameter-unit">°C</span>
+                                </div>
+                                <div class="parameter-status">
+                                    <div class="status-indicator-small status-normal"></div>
+                                    <span style="font-size: 12px; color: var(--success);">Normal</span>
+                                </div>
+                            </div>
+                            
+                            <div class="parameter">
+                                <div class="parameter-label">Turbine Speed</div>
+                                <div class="parameter-value">
+                                    <span id="turbineSpeed">3000.2</span>
+                                    <span class="parameter-unit">RPM</span>
+                                </div>
+                                <div class="parameter-status">
+                                    <div class="status-indicator-small status-normal"></div>
+                                    <span style="font-size: 12px; color: var(--success);">Normal</span>
+                                </div>
+                            </div>
+                            
+                            <div class="parameter">
+                                <div class="parameter-label">Generator Voltage</div>
+                                <div class="parameter-value">
+                                    <span id="generatorVoltage">13.8</span>
+                                    <span class="parameter-unit">kV</span>
+                                </div>
+                                <div class="parameter-status">
+                                    <div class="status-indicator-small status-normal"></div>
+                                    <span style="font-size: 12px; color: var(--success);">Normal</span>
+                                </div>
+                            </div>
+                            
+                            <div class="parameter">
+                                <div class="parameter-label">Feedwater Flow</div>
+                                <div class="parameter-value">
+                                    <span id="feedwaterFlow">1250.3</span>
+                                    <span class="parameter-unit">t/h</span>
+                                </div>
+                                <div class="parameter-status">
+                                    <div class="status-indicator-small status-critical"></div>
+                                    <span style="font-size: 12px; color: var(--error);">Critical</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Active Alarms</h3>
+                        <span style="font-size: 12px; color: var(--neutral-500);"><span id="alarmCount">5</span> Active</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="alarms-list" id="alarmsList">
+                            <!-- Alarms will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card system-overview">
+                <div class="card-header">
+                    <h3>DCS System Overview</h3>
+                    <div class="refresh-controls">
+                        <button class="btn secondary" onclick="refreshSystems()">
+                            <i data-lucide="refresh"></i>
+                            Refresh Systems
+                        </button>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="systems-grid" id="systemsGrid">
+                        <!-- Systems will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Equipment Status Summary</h3>
+                </div>
+                <div class="card-content">
+                    <div class="equipment-status" id="equipmentStatus">
+                        <!-- Equipment will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Plant parameters data
+        let plantParameters = {
+            unit1Output: 350.5,
+            mainSteamPressure: 165.2,
+            boilerTemp: 540.1,
+            turbineSpeed: 3000.2,
+            generatorVoltage: 13.8,
+            feedwaterFlow: 1250.3
+        };
+        
+        // Generate random variations
+        function generateVariation(value, variation = 0.1) {
+            return value + (Math.random() - 0.5) * variation;
+        }
+        
+        // Update plant parameters
+        function updatePlantParameters() {
+            Object.keys(plantParameters).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    const newValue = generateVariation(plantParameters[key], plantParameters[key] * 0.02);
+                    element.textContent = newValue.toFixed(1);
+                    plantParameters[key] = newValue;
+                }
+            });
+            
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+        }
+        
+        // Alarms data
+        let alarms = [
+            { id: 1, title: 'Boiler Feed Pump 1 Vibration High', description: 'Vibration level exceeded threshold', severity: 'critical', time: '14:23:15' },
+            { id: 2, title: 'Main Steam Pressure Low', description: 'Pressure dropped below setpoint', severity: 'warning', time: '14:18:42' },
+            { id: 3, title: 'DCS Controller Communication Loss', description: 'Controller 3A communication error', severity: 'critical', time: '14:15:30' },
+            { id: 4, title: 'Generator Temperature High', description: 'Temperature above normal range', severity: 'warning', time: '14:12:18' },
+            { id: 5, title: 'Network Switch Fan Failure', description: 'Switch 2 cooling fan stopped', severity: 'info', time: '14:08:55' }
+        ];
+        
+        // Render alarms
+        function renderAlarms() {
+            const alarmsList = document.getElementById('alarmsList');
+            alarmsList.innerHTML = '';
+            
+            alarms.forEach(alarm => {
+                const alarmItem = document.createElement('div');
+                alarmItem.className = 'alarm-item';
+                alarmItem.innerHTML = `
+                    <div class="alarm-info">
+                        <div class="alarm-title">${alarm.title}</div>
+                        <div class="alarm-description">${alarm.description}</div>
+                    </div>
+                    <div class="alarm-meta">
+                        <span class="alarm-severity severity-${alarm.severity}">${alarm.severity}</span>
+                        <span class="alarm-time">${alarm.time}</span>
+                    </div>
+                `;
+                alarmsList.appendChild(alarmItem);
+            });
+            
+            document.getElementById('alarmCount').textContent = alarms.length;
+        }
+        
+        // DCS Systems
+        let dcsSystems = [
+            { name: 'Emerson Ovation', status: 'online', cpu: 45, memory: 62, uptime: '45d 12h' },
+            { name: 'Siemens T3000', status: 'online', cpu: 38, memory: 58, uptime: '23d 8h' },
+            { name: 'ABB 800xA', status: 'maintenance', cpu: 12, memory: 34, uptime: '67d 15h' },
+            { name: 'Yokogawa CENTUM', status: 'online', cpu: 52, memory: 71, uptime: '12d 3h' },
+            { name: 'Honeywell Experion', status: 'online', cpu: 41, memory: 65, uptime: '34d 21h' }
+        ];
+        
+        // Render DCS systems
+        function renderDcsSystems() {
+            const systemsGrid = document.getElementById('systemsGrid');
+            systemsGrid.innerHTML = '';
+            
+            dcsSystems.forEach(system => {
+                const systemCard = document.createElement('div');
+                systemCard.className = 'system-card';
+                systemCard.innerHTML = `
+                    <div class="system-header">
+                        <span class="system-name">${system.name}</span>
+                        <span class="system-status system-${system.status}">${system.status}</span>
+                    </div>
+                    <div class="system-metrics">
+                        <div class="metric">
+                            <div class="metric-label">CPU</div>
+                            <div class="metric-value">${system.cpu}%</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Memory</div>
+                            <div class="metric-value">${system.memory}%</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Uptime</div>
+                            <div class="metric-value" style="font-size: 11px;">${system.uptime}</div>
+                        </div>
+                    </div>
+                `;
+                systemsGrid.appendChild(systemCard);
+            });
+        }
+        
+        // Equipment data
+        let equipment = [
+            { name: 'Boiler Feed Pump 1', status: 'running', value: '87%', trend: 'up' },
+            { name: 'Boiler Feed Pump 2', status: 'standby', value: '12%', trend: 'stable' },
+            { name: 'Main Turbine', status: 'running', value: '98%', trend: 'stable' },
+            { name: 'Generator 1', status: 'running', value: '95%', trend: 'up' },
+            { name: 'Air Compressor 1', status: 'running', value: '76%', trend: 'down' },
+            { name: 'Cooling Tower 1', status: 'running', value: '82%', trend: 'stable' }
+        ];
+        
+        // Render equipment
+        function renderEquipment() {
+            const equipmentStatus = document.getElementById('equipmentStatus');
+            equipmentStatus.innerHTML = '';
+            
+            equipment.forEach(item => {
+                const equipmentItem = document.createElement('div');
+                equipmentItem.className = 'equipment-item';
+                equipmentItem.innerHTML = `
+                    <div class="equipment-name">${item.name}</div>
+                    <div class="equipment-icon">
+                        <i data-lucide="${item.status === 'running' ? 'play' : item.status === 'standby' ? 'pause' : 'stop'}"></i>
+                    </div>
+                    <div class="equipment-value">${item.value}</div>
+                    <div class="trend-indicator trend-${item.trend}">
+                        ${item.trend === 'up' ? '↑' : item.trend === 'down' ? '↓' : '→'}
+                    </div>
+                `;
+                equipmentStatus.appendChild(equipmentItem);
+            });
+            
+            // Reinitialize icons
+            lucide.createIcons();
+        }
+        
+        // Refresh all data
+        function refreshData() {
+            updatePlantParameters();
+            renderAlarms();
+            renderDcsSystems();
+            renderEquipment();
+        }
+        
+        // Auto refresh
+        let autoRefreshInterval;
+        function toggleAutoRefresh() {
+            const switchElement = document.getElementById('autoRefreshSwitch');
+            const isActive = switchElement.classList.contains('active');
+            
+            if (isActive) {
+                switchElement.classList.remove('active');
+                if (autoRefreshInterval) {
+                    clearInterval(autoRefreshInterval);
+                }
+            } else {
+                switchElement.classList.add('active');
+                autoRefreshInterval = setInterval(refreshData, 5000);
+            }
+        }
+        
+        // Acknowledge all alarms
+        function acknowledgeAllAlarms() {
+            alarms = [];
+            renderAlarms();
+            saveData();
+        }
+        
+        // Export data
+        function exportData() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                parameters: plantParameters,
+                alarms: alarms,
+                systems: dcsSystems,
+                equipment: equipment
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `plant-data-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        // Save data to localStorage
+        function saveData() {
+            const dashboardData = {
+                parameters: plantParameters,
+                alarms: alarms,
+                systems: dcsSystems,
+                equipment: equipment,
+                lastUpdated: new Date().toISOString()
+            };
+            localStorage.setItem('operations-dashboard-data', JSON.stringify(dashboardData));
+        }
+        
+        // Load data from localStorage
+        function loadData() {
+            const saved = localStorage.getItem('operations-dashboard-data');
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data.parameters) plantParameters = data.parameters;
+                if (data.alarms) alarms = data.alarms;
+                if (data.systems) dcsSystems = data.systems;
+                if (data.equipment) equipment = data.equipment;
+            }
+        }
+        
+        // Refresh systems only
+        function refreshSystems() {
+            // Simulate system data update
+            dcsSystems.forEach(system => {
+                system.cpu = Math.floor(Math.random() * 80) + 10;
+                system.memory = Math.floor(Math.random() * 70) + 20;
+            });
+            renderDcsSystems();
+            saveData();
+        }
+        
+        // Initialize
+        loadData();
+        refreshData();
+        
+        // Start auto refresh by default
+        document.getElementById('autoRefreshSwitch').classList.add('active');
+        autoRefreshInterval = setInterval(refreshData, 5000);
+        
+        // Add click handlers
+        document.getElementById('autoRefreshSwitch').addEventListener('click', toggleAutoRefresh);
+        
+        // Save data periodically
+        setInterval(saveData, 30000);
+        
+        // Check online status
+        function updateConnectionStatus() {
+            const statusDot = document.getElementById('connectionStatus');
+            if (navigator.onLine) {
+                statusDot.className = 'status-dot online';
+                statusDot.parentElement.querySelector('span').textContent = 'Online';
+            } else {
+                statusDot.className = 'status-dot warning';
+                statusDot.parentElement.querySelector('span').textContent = 'Offline';
+            }
+        }
+        
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+        updateConnectionStatus();
+    </script>
+</body>
+</html>
